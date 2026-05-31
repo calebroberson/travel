@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birmingham 4th of July 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Oswald:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f8f5f0;
+    min-height: 100vh;
+  }
+
+  /* PASSWORD GATE */
+  #gate {
+    position: fixed; inset: 0;
+    background: #3C3B6E;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    flex-direction: column;
+    gap: 20px;
+    padding: 2rem;
+  }
+  #gate h1 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.8rem;
+    text-align: center;
+    line-height: 1.3;
+  }
+  #gate p { color: rgba(255,255,255,0.7); font-size: 0.9rem; text-align: center; }
+  #gate input {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+    letter-spacing: 2px;
+    outline: none;
+  }
+  #gate button {
+    background: #B22234;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 280px;
+  }
+  #gate button:hover { background: #8a1a26; }
+  #gate-error { color: #ffaaaa; font-size: 0.85rem; display: none; }
+  #gate .stars { color: rgba(255,255,255,0.6); font-size: 1.2rem; letter-spacing: 8px; }
+
+  /* MAIN CONTENT */
+  #main { display: none; max-width: 680px; margin: 0 auto; }
+
+  .hero {
+    background: #B22234;
+    padding: 2.5rem 1.5rem 1.75rem;
+    text-align: center;
+  }
+  .hero .stars-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem; }
+  .hero .stars-row span { color: #fff; font-size: 18px; opacity: 0.85; }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    color: #fff;
+    line-height: 1.2;
+  }
+  .hero-sub {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    margin-top: 0.4rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .vulcan-badge {
+    display: inline-block;
+    margin-top: 0.9rem;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    color: #fff;
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  .stripe {
+    height: 10px;
+    background: linear-gradient(90deg, #B22234 0 33.33%, #fff 33.33% 66.66%, #3C3B6E 66.66% 100%);
+  }
+
+  .days-wrap {
+    padding: 1.25rem 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .day-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0d8cc;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.1rem;
+  }
+  .day-header.wed, .day-header.fri, .day-header.sun { background: #3C3B6E; }
+  .day-header.thu, .day-header.sat { background: #B22234; }
+
+  .day-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+  .day-meta { display: flex; align-items: center; gap: 10px; }
+  .day-date { font-size: 0.72rem; color: rgba(255,255,255,0.72); font-family: 'Oswald', sans-serif; }
+  .day-flag { font-size: 1.2rem; }
+
+  .fireworks-bar {
+    background: #3C3B6E;
+    padding: 0.4rem 1rem;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+
+  .events { padding: 0.5rem 1rem 0.75rem; }
+
+  .event {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.6rem 0;
+    border-bottom: 0.5px solid #f0ece4;
+  }
+  .event:last-child { border-bottom: none; }
+
+  .event-time {
+    font-size: 0.68rem;
+    color: #999;
+    min-width: 70px;
+    padding-top: 2px;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+
+  .event-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .dot-blue { background: #3C3B6E; }
+  .dot-red { background: #B22234; }
+  .dot-gold { background: #c8922a; }
+
+  .event-body { flex: 1; min-width: 0; }
+
+  .event-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a1a2e;
+    line-height: 1.35;
+  }
+
+  .event-detail {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 3px;
+    line-height: 1.45;
+  }
+
+  .easter-egg {
+    display: inline-block;
+    background: #f5f0e8;
+    border: 1px solid #e0d5c0;
+    border-radius: 7px;
+    padding: 0.12rem 0.5rem;
+    font-size: 0.68rem;
+    color: #7a6a4a;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .note {
+    border-radius: 0 6px 6px 0;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.72rem;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+  .note-tan { background: #f5f0e8; border-left: 3px solid #c8922a; color: #7a6a4a; }
+  .note-blue { background: #ecedf8; border-left: 3px solid #3C3B6E; color: #3C3B6E; }
+  .note-green { background: #eaf3de; border-left: 3px solid #3B6D11; color: #3B6D11; }
+
+  .flight-block {
+    background: #f0f2fa;
+    border: 1px solid #c8cce8;
+    border-radius: 7px;
+    padding: 0.45rem 0.65rem;
+    margin-top: 5px;
+  }
+  .flight-row {
+    font-size: 0.73rem;
+    color: #3C3B6E;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.3px;
+    line-height: 1.6;
+  }
+  .flight-num { font-weight: 600; }
+  .flight-div { height: 0.5px; background: #c8cce8; margin: 3px 0; }
+  .layover-tag {
+    display: inline-block;
+    background: #fff3e0;
+    border: 1px solid #f5c06a;
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-size: 0.67rem;
+    color: #8a5500;
+    margin-top: 4px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.8px;
+    padding: 1px 7px;
+    border-radius: 9px;
+    margin-left: 5px;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+  .badge-blue { background: #ecedf8; color: #3C3B6E; border: 1px solid #c0c3e8; }
+  .badge-gold { background: #fdf6e8; color: #8a6010; border: 1px solid #e8d5a0; }
+
+  .option-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+  .option-pill {
+    background: #ecedf8;
+    border: 1px solid #c0c3e8;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.68rem;
+    color: #3C3B6E;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  .placeholder-tag {
+    display: inline-block;
+    background: #fff8e8;
+    border: 1px dashed #c8922a;
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 0.65rem;
+    color: #8a6010;
+    margin-left: 4px;
+  }
+
+  .footer {
+    background: #3C3B6E;
+    padding: 1.1rem 1.5rem;
+    text-align: center;
+  }
+  .footer-text {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.75rem;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1.5px;
+  }
+  .footer-stars { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 0.35rem; letter-spacing: 6px; }
+
+  @media (max-width: 420px) {
+    .event-time { min-width: 58px; font-size: 0.63rem; }
+    .event-name { font-size: 0.85rem; }
+    .event-detail { font-size: 0.74rem; }
+    .days-wrap { padding: 1rem 0.75rem 2rem; }
+    .events { padding: 0.5rem 0.85rem 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="stars">★ ★ ★ ★ ★</div>
+  <h1>Birmingham<br>4th of July 2026</h1>
+  <p>Enter the password to view the itinerary</p>
+  <input type="password" id="pw-input" placeholder="password" onkeydown="if(event.key==='Enter')checkPw()">
+  <button onclick="checkPw()">ENTER ★</button>
+  <span id="gate-error">Incorrect password — try again</span>
+</div>
+
+<!-- MAIN ITINERARY -->
+<div id="main">
+
+  <div class="hero">
+    <div class="stars-row">
+      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+    </div>
+    <div class="hero-title">Birmingham<br>4th of July</div>
+    <div class="hero-sub">July 1–5, 2026</div>
+    <div class="vulcan-badge">⚒ The Magic City ⚒</div>
+  </div>
+
+  <div class="stripe"></div>
+
+  <div class="days-wrap">
+
+    <!-- WEDNESDAY -->
+    <div class="day-card">
+      <div class="day-header wed">
+        <div class="day-label">Wednesday</div>
+        <div class="day-meta"><span class="day-date">July 1</span><span class="day-flag">✈️</span></div>
+      </div>
+      <div class="events">
+
+        <div class="event">
+          <div class="event-time">6:50 am</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Depart Boston <span class="badge badge-blue">Caleb & Dylan</span></div>
+            <div class="flight-block">
+              <div class="flight-row"><span class="flight-num">DL0695</span> → BOS 6:50am → ATL 9:33am <span style="color:#999">(2h 43m)</span></div>
+              <div class="flight-div"></div>
+              <div class="flight-row"><span class="flight-num">DL1017</span> → ATL 11:15am → BHM 11:11am <span style="color:#999">(56m)</span></div>
+            </div>
+            <div class="layover-tag">1hr 42m layover in Atlanta</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">11:11 am</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Arrive Birmingham — welcome to the Magic City</div>
+            <div class="event-detail">Check in at the house, get settled</div>
+            <div class="easter-egg">🏠 Red Mountain on the horizon</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">~12:30 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Casual lunch <span class="badge badge-blue">Caleb & Dylan</span></div>
+            <div class="event-detail">Low-key first meal while Matthew makes his way down</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">TBD — Afternoon</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Matthew arrives <span class="badge badge-gold">Solo flight</span></div>
+            <div class="event-detail">Making his own way to Birmingham — arrival TBD</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">6:30 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Dinner — Saigon Noodle House</div>
+            <div class="event-detail">Highway 280 — all three together for the first time. Usually takeout enjoyed at home, though dining in is always an option too.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- THURSDAY -->
+    <div class="day-card">
+      <div class="day-header thu">
+        <div class="day-label">Thursday</div>
+        <div class="day-meta"><span class="day-date">July 2</span><span class="day-flag">⛳</span></div>
+      </div>
+      <div class="events">
+
+        <div class="event">
+          <div class="event-time">Morning</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Golf — Highland Park</div>
+            <div class="event-detail">Round 1 — a classic Birmingham course. Tee time TBD, booked the week prior.</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">12:30 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Lunch — Back Forty Beer Company</div>
+            <div class="event-detail">Sloss Docks — best brewery food in Birmingham, great views of the furnaces</div>
+            <div class="easter-egg">🍺 Try the Truck Stop Honey Brown Ale</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">2:30 pm</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Walk Sloss Furnaces</div>
+            <div class="event-detail">National Historic Landmark — right across the street, free admission</div>
+            <div class="note note-blue">⚒ One of the best-preserved iron blast furnaces in the US — opened 1882</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">3:30 pm</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Vulcan Park & Museum</div>
+            <div class="event-detail">Stop on the way home — views of Birmingham from Red Mountain are worth it</div>
+            <div class="easter-egg">🗽 The world's largest cast iron statue, standing 56 feet tall</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">4:30 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Back to the house to clean up</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">7:00 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Dinner — Automatic Seafood</div>
+            <div class="event-detail">Reservation confirmed — one of Birmingham's finest</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">9:00 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Jeni's Ice Cream</div>
+            <div class="event-detail">Crestline or Homewood location — the perfect nightcap</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FRIDAY -->
+    <div class="day-card">
+      <div class="day-header fri">
+        <div class="day-label">Friday</div>
+        <div class="day-meta"><span class="day-date">July 3</span><span class="day-flag">🏌️</span></div>
+      </div>
+      <div class="events">
+
+        <div class="event">
+          <div class="event-time">Morning</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Golf — Oak Mountain State Park</div>
+            <div class="event-detail">Round 2 — more scenic, well worth the drive south. Tee time TBD, booked the week prior.</div>
+            <div class="easter-egg">🌲 Alabama's largest state park</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">~12:30 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Lunch — Buc-ee's</div>
+            <div class="event-detail">A Southern institution — the perfect post-golf stop on the way back</div>
+            <div class="easter-egg">🦫 Get the beaver nuggets. Non-negotiable.</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">Afternoon</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Hang at the house</div>
+            <div class="event-detail">Yard games and cold drinks while the afternoon rolls in</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">4:00 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Lexicon — happy hour</div>
+            <div class="note note-tan">🥃 One of Birmingham's best kept secrets</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">5:30 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Dinner at home — dad's smoked Boston butt</div>
+            <div class="event-detail">Back to the house for a proper Southern barbecue dinner before the game</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">7:00 pm</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Barons Game — Regions Field</div>
+            <div class="event-detail">First pitch 7:00pm — minor league baseball on a summer night</div>
+            <div class="easter-egg">⚾ Double-A affiliate of the Chicago White Sox</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SATURDAY -->
+    <div class="day-card">
+      <div class="day-header sat">
+        <div class="day-label">Saturday — 4th of July</div>
+        <div class="day-meta"><span class="day-date">July 4</span><span class="day-flag">🎆</span></div>
+      </div>
+      <div class="fireworks-bar">★ &nbsp; Happy Independence Day &nbsp; ★</div>
+      <div class="events">
+
+        <div class="event">
+          <div class="event-time">9:00 am</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Pepper Place Saturday Market</div>
+            <div class="event-detail">Breakfast from market vendors, live music, local farmers and artisans</div>
+            <div class="note note-green">🌿 Breakfast burritos, pastries, coffee, and more — no need to eat before heading over</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">12:00 pm</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">The Robersons' 4th of July Classic</div>
+            <div class="event-detail">Pool, cornhole, lawn games, and cold drinks — a long, easy Southern afternoon at the house</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">3:30 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Grandparents arrive — sit-down smoked ribs dinner</div>
+            <div class="event-detail">A proper, more formal early dinner to celebrate the 4th with family</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">Evening</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Cocktail bar downtown</div>
+            <div class="event-detail">After dinner — pick your poison:</div>
+            <div class="option-list">
+              <span class="option-pill">The Collins Bar</span>
+              <span class="option-pill">House of Found Objects</span>
+              <span class="option-pill">Adios</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">9:00 pm</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Thunder on the Mountain — Vulcan Park Fireworks</div>
+            <div class="event-detail">Birmingham's largest 4th of July fireworks show — over 2,500 shells synchronized to a patriotic soundtrack</div>
+            <div class="note note-blue">🏢 Watched from the rooftop of the Shelby Building parking garage at UAB</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUNDAY -->
+    <div class="day-card">
+      <div class="day-header sun">
+        <div class="day-label">Sunday</div>
+        <div class="day-meta"><span class="day-date">July 5</span><span class="day-flag">✈️</span></div>
+      </div>
+      <div class="events">
+
+        <div class="event">
+          <div class="event-time">8:30 am</div>
+          <div class="event-dot dot-gold"></div>
+          <div class="event-body">
+            <div class="event-name">Buc-ee's — grab & go breakfast</div>
+            <div class="event-detail">Kolaches, brisket breakfast sandwiches, and beaver nuggets for the road</div>
+            <div class="easter-egg">🤠 One last taste of the South before heading home</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">9:15 am</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Head to Birmingham airport</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">11:11 am</div>
+          <div class="event-dot dot-red"></div>
+          <div class="event-body">
+            <div class="event-name">Depart Birmingham <span class="badge badge-blue">All three</span></div>
+            <div class="flight-block">
+              <div class="flight-row"><span class="flight-num">DL4936</span> → BHM 11:11am → LGA 2:47pm <span style="color:#999">(2h 36m)</span></div>
+              <div class="flight-div"></div>
+              <div class="flight-row"><span class="flight-num">DL5819</span> → LGA 4:00pm → BOS 5:33pm <span style="color:#999">(1h 33m)</span></div>
+            </div>
+            <div class="layover-tag">~1hr 13m layover at LaGuardia</div>
+          </div>
+        </div>
+
+        <div class="event">
+          <div class="event-time">5:33 pm</div>
+          <div class="event-dot dot-blue"></div>
+          <div class="event-body">
+            <div class="event-name">Arrive Boston — Terminal A</div>
+            <div class="event-detail">Until next time, Birmingham</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Birmingham, Alabama · July 2026</div>
+    <div class="footer-stars">★ ★ ★ ★ ★</div>
+  </div>
+
+</div>
+
+<script>
+  function checkPw() {
+    const val = document.getElementById('pw-input').value.trim().toLowerCase();
+    if (val === 'birmingham') {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      sessionStorage.setItem('bham_auth', '1');
+    } else {
+      document.getElementById('gate-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+  // Auto-unlock if already authenticated this session
+  if (sessionStorage.getItem('bham_auth') === '1') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+  }
+</script>
+</body>
+</html>
