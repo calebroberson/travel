@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norway · Caleb & Matthew · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --fjord-deep: #0E2A38;
+    --fjord: #14455B;
+    --fjord-mid: #2B6E7F;
+    --glacier: #8FC7D4;
+    --glacier-pale: #D6EAEF;
+    --snow: #F4F1EA;
+    --pine: #1F4536;
+    --pine-mid: #3B6D52;
+    --rust: #B5532A;
+    --rust-soft: #C97A4E;
+    --gold: #D8A23A;
+    --ink: #16242B;
+    --muted: #5C6B70;
+    --line: rgba(20,69,91,0.12);
+    --card: #FBFAF6;
+  }
+
+  body {
+    font-family: 'Spline Sans', sans-serif;
+    background: var(--snow);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== PASSWORD GATE ========== */
+  #gate {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(143,199,212,0.25), transparent 60%),
+      linear-gradient(180deg, #0B2230 0%, #14455B 55%, #1F4536 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; flex-direction: column; gap: 24px; padding: 2rem;
+    overflow: hidden;
+  }
+  /* layered mountain silhouettes on the gate */
+  #gate .mtn {
+    position: absolute; left: 0; right: 0; bottom: 0; width: 100%;
+    pointer-events: none;
+  }
+  #gate .mtn.back { opacity: 0.4; bottom: 0; }
+  #gate .mtn.front { opacity: 0.7; bottom: 0; }
+  #gate-inner {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 22px;
+    width: 100%; max-width: 340px;
+  }
+  #gate .kicker {
+    font-family: 'Spline Sans', sans-serif;
+    color: var(--glacier); font-size: 0.72rem; letter-spacing: 4px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  #gate h1 {
+    font-family: 'Fraunces', serif; color: #fff; font-size: 2.3rem;
+    text-align: center; line-height: 1.1; font-weight: 600;
+  }
+  #gate h1 em { font-style: italic; color: var(--glacier); }
+  #gate p { color: rgba(255,255,255,0.65); font-size: 0.85rem; text-align: center; }
+  #gate input {
+    padding: 0.85rem 1.25rem; border-radius: 10px; border: 1.5px solid rgba(143,199,212,0.4);
+    background: rgba(255,255,255,0.08); color: #fff;
+    font-size: 1rem; width: 100%; text-align: center; letter-spacing: 3px;
+    outline: none; font-family: 'Spline Sans', sans-serif;
+  }
+  #gate input::placeholder { color: rgba(255,255,255,0.4); letter-spacing: 2px; }
+  #gate input:focus { border-color: var(--glacier); background: rgba(255,255,255,0.12); }
+  #gate button {
+    background: var(--rust); color: #fff; border: none; padding: 0.85rem 2rem;
+    border-radius: 10px; font-size: 0.95rem; font-family: 'Spline Sans', sans-serif;
+    letter-spacing: 1px; font-weight: 600; cursor: pointer; width: 100%;
+    transition: background 0.2s, transform 0.1s;
+  }
+  #gate button:hover { background: var(--rust-soft); }
+  #gate button:active { transform: translateY(1px); }
+  #gate-error { color: #F0A38A; font-size: 0.82rem; display: none; }
+
+  /* ========== MAIN ========== */
+  #main { display: none; }
+
+  /* HERO */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(180deg, #0E2A38 0%, #14455B 60%, #2B6E7F 100%);
+    padding: 2.75rem 1.5rem 0; text-align: center;
+  }
+  .hero-kicker {
+    color: var(--glacier); font-size: 0.7rem; letter-spacing: 4px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 0.75rem;
+    position: relative; z-index: 3;
+  }
+  .hero-title {
+    font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 9vw, 3.2rem);
+    color: #fff; font-weight: 600; line-height: 1.0; letter-spacing: -0.5px;
+    position: relative; z-index: 3;
+  }
+  .hero-title em { font-style: italic; color: var(--glacier); }
+  .hero-sub {
+    color: rgba(255,255,255,0.8); font-size: 0.92rem; margin-top: 0.85rem;
+    position: relative; z-index: 3;
+  }
+  .hero-names {
+    color: rgba(255,255,255,0.95); font-size: 0.8rem; margin-top: 0.4rem;
+    letter-spacing: 2px; text-transform: uppercase; position: relative; z-index: 3;
+    padding-bottom: 2.5rem;
+  }
+  .hero svg.range { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; display: block; z-index: 1; }
+
+  /* TABS */
+  .tabs {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; background: var(--card); border-bottom: 1px solid var(--line);
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1 0 auto; padding: 0.9rem 1.1rem; text-align: center;
+    font-size: 0.82rem; font-weight: 600; color: var(--muted);
+    background: none; border: none; cursor: pointer; white-space: nowrap;
+    border-bottom: 2.5px solid transparent; font-family: 'Spline Sans', sans-serif;
+    letter-spacing: 0.3px; transition: color 0.15s;
+  }
+  .tab:hover { color: var(--fjord); }
+  .tab.active { color: var(--fjord-deep); border-bottom-color: var(--rust); }
+
+  /* CONTENT */
+  .panel { display: none; max-width: 680px; margin: 0 auto; padding: 1.5rem 1.1rem 3rem; }
+  .panel.active { display: block; animation: fade 0.35s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PHASE LABEL */
+  .phase {
+    display: flex; align-items: center; gap: 10px;
+    margin: 1.75rem 0 0.85rem; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--fjord-mid);
+  }
+  .phase:first-child { margin-top: 0.25rem; }
+  .phase::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .phase .pin { color: var(--rust); font-size: 0.9rem; }
+
+  /* DAY CARD */
+  .day {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; margin-bottom: 0.85rem; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(14,42,56,0.04);
+  }
+  .day-head {
+    display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem;
+    background: linear-gradient(180deg, rgba(214,234,239,0.5), rgba(214,234,239,0.15));
+    border-bottom: 1px solid var(--line);
+  }
+  .day-badge {
+    font-size: 0.66rem; font-weight: 600; padding: 0.2rem 0.6rem;
+    border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px;
+  }
+  .b-bergen { background: #DCEFE7; color: var(--pine); }
+  .b-aurland { background: #E4E0F4; color: #3C3489; }
+  .b-voss { background: #F6EAD6; color: #7A4A12; }
+  .b-oslo { background: #F7E2D9; color: #8A3318; }
+  .day-name { font-family: 'Fraunces', serif; font-size: 1.02rem; font-weight: 600; color: var(--ink); flex: 1; line-height: 1.2; }
+  .day-meta { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .day-body { padding: 0.85rem 1rem; }
+
+  .ev { display: flex; gap: 11px; padding: 0.4rem 0; }
+  .ev-time { font-size: 0.7rem; font-weight: 600; color: var(--muted); width: 52px; flex-shrink: 0; padding-top: 2px; }
+  .ev-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; border: 2px solid var(--card); box-shadow: 0 0 0 1.5px currentColor; }
+  .dot-blue { color: #2B6E7F; background: #2B6E7F; }
+  .dot-green { color: #3B6D52; background: #3B6D52; }
+  .dot-rust { color: #B5532A; background: #B5532A; }
+  .dot-gold { color: #D8A23A; background: #D8A23A; }
+  .dot-purple { color: #6A5ACD; background: #6A5ACD; }
+  .dot-gray { color: #8B9598; background: #8B9598; }
+  .ev-body { flex: 1; }
+  .ev-name { font-size: 0.86rem; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .ev-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.45; margin-top: 1px; }
+  .tags { margin-top: 3px; }
+  .tg { display: inline-block; font-size: 0.6rem; font-weight: 600; padding: 0.1rem 0.45rem; border-radius: 8px; margin-right: 3px; margin-bottom: 2px; letter-spacing: 0.3px; }
+  .tg-book { background: #DCEFE7; color: var(--pine); }
+  .tg-todo { background: #F6EAD6; color: #7A4A12; }
+  .tg-photo { background: #E4E0F4; color: #3C3489; }
+  .tg-active { background: #D6EAEF; color: var(--fjord); }
+  .tg-food { background: #F7E2D9; color: #8A3318; }
+  .tg-free { background: #E3EFD3; color: #3F5A18; }
+
+  .ev-div { height: 1px; background: var(--line); margin: 0.5rem 0 0.5rem 63px; }
+
+  /* ACTION LIST */
+  .action-intro {
+    background: linear-gradient(135deg, var(--fjord-deep), var(--fjord));
+    color: #fff; border-radius: 16px; padding: 1.1rem 1.2rem; margin-bottom: 1.25rem;
+  }
+  .action-intro .ai-title { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .action-intro .ai-sub { font-size: 0.8rem; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+  .win-head { display: flex; align-items: center; gap: 9px; margin: 1.4rem 0 0.7rem; }
+  .win-head:first-of-type { margin-top: 0; }
+  .win-badge { font-size: 0.66rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px; }
+  .w-now { background: #F5DDD6; color: #8A2A12; }
+  .w-soon { background: #F6EAD6; color: #7A4A12; }
+  .w-mid { background: #D6EAEF; color: var(--fjord); }
+  .w-late { background: #DCEFE7; color: var(--pine); }
+  .win-title { font-family: 'Fraunces', serif; font-size: 0.98rem; font-weight: 600; color: var(--ink); }
+  .win-sub { font-size: 0.68rem; color: var(--muted); }
+
+  .todo-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .todo { display: flex; gap: 11px; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); align-items: flex-start; cursor: pointer; transition: background 0.15s; }
+  .todo:last-child { border-bottom: none; }
+  .todo:hover { background: rgba(214,234,239,0.3); }
+  .todo .check { width: 19px; height: 19px; border-radius: 6px; border: 2px solid var(--fjord-mid); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .todo .check svg { width: 11px; height: 11px; stroke: #fff; stroke-width: 3; fill: none; opacity: 0; }
+  .todo.done .check { background: var(--pine-mid); border-color: var(--pine-mid); }
+  .todo.done .check svg { opacity: 1; }
+  .todo.done .t-name { text-decoration: line-through; color: var(--muted); }
+  .t-name { font-size: 0.85rem; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .t-why { font-size: 0.74rem; color: var(--muted); line-height: 1.45; margin-top: 2px; }
+  .t-where { font-size: 0.68rem; color: var(--fjord-mid); margin-top: 2px; font-weight: 600; }
+
+  /* HOTELS */
+  .hotel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 0.85rem; overflow: hidden; }
+  .hotel-head { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); }
+  .hotel-name { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 600; flex: 1; line-height: 1.2; }
+  .hotel-status { font-size: 0.62rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 20px; background: #DCEFE7; color: var(--pine); white-space: nowrap; }
+  .hotel-body { padding: 0.8rem 1rem; }
+  .hotel-row { display: flex; gap: 8px; font-size: 0.78rem; color: var(--muted); padding: 0.2rem 0; align-items: flex-start; line-height: 1.45; }
+  .hotel-row .hr-ic { color: var(--fjord-mid); flex-shrink: 0; margin-top: 1px; font-size: 0.85rem; }
+  .hotel-row strong { color: var(--ink); font-weight: 600; }
+
+  /* MAP / TRANSPORT */
+  .route-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.2rem; margin-bottom: 0.85rem; }
+  .route-leg { display: flex; gap: 12px; align-items: flex-start; padding: 0.45rem 0; }
+  .route-leg .rl-icon { font-size: 1.1rem; flex-shrink: 0; width: 26px; text-align: center; }
+  .route-leg .rl-body { flex: 1; }
+  .route-leg .rl-title { font-size: 0.86rem; font-weight: 600; color: var(--ink); }
+  .route-leg .rl-detail { font-size: 0.76rem; color: var(--muted); line-height: 1.45; margin-top: 1px; }
+  .route-connector { width: 2px; height: 14px; background: var(--line); margin-left: 13px; }
+
+  .info-box { background: linear-gradient(135deg, rgba(214,234,239,0.5), rgba(227,239,211,0.3)); border: 1px solid var(--line); border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 0.85rem; display: flex; gap: 10px; }
+  .info-box .ib-ic { font-size: 1rem; flex-shrink: 0; }
+  .info-box .ib-text { font-size: 0.78rem; color: var(--ink); line-height: 1.5; }
+  .info-box .ib-text strong { font-weight: 600; }
+
+  .section-title { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; color: var(--fjord-deep); margin: 1.6rem 0 0.8rem; }
+  .section-title:first-child { margin-top: 0.25rem; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 2rem 1rem 2.5rem; border-top: 1px solid var(--line); background: var(--card); }
+  .footer-text { font-family: 'Fraunces', serif; font-size: 0.9rem; color: var(--fjord); font-style: italic; }
+  .footer-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.4rem; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD GATE ===== -->
+<div id="gate">
+  <svg class="mtn back" viewBox="0 0 400 120" preserveAspectRatio="none" height="120">
+    <path d="M0,120 L0,70 L60,30 L110,65 L160,20 L220,60 L280,25 L340,55 L400,35 L400,120 Z" fill="#0B2230"/>
+  </svg>
+  <svg class="mtn front" viewBox="0 0 400 90" preserveAspectRatio="none" height="90">
+    <path d="M0,90 L0,55 L50,25 L95,55 L150,15 L200,50 L255,30 L310,58 L360,28 L400,52 L400,90 Z" fill="#081A24"/>
+    <path d="M150,15 L135,30 L165,30 Z" fill="#D6EAEF" opacity="0.85"/>
+    <path d="M50,25 L40,38 L60,38 Z" fill="#D6EAEF" opacity="0.7"/>
+  </svg>
+  <div id="gate-inner">
+    <div class="kicker">End of Summer · 2026</div>
+    <h1>Norge<br><em>awaits</em></h1>
+    <p>Enter the password to view the itinerary</p>
+    <input type="password" id="pw-input" placeholder="password" autocomplete="off" onkeydown="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">Unlock the trip →</button>
+    <div id="gate-error">Not quite — try again</div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div id="main">
+
+  <div class="hero">
+    <div class="hero-kicker">Bergen · Aurland · Voss · Oslo</div>
+    <h1 class="hero-title">Norway, <em>the long way</em></h1>
+    <div class="hero-sub">Seven nights through fjords, mountains & cities</div>
+    <div class="hero-names">Caleb &amp; Matthew · Aug 29–Sep 5</div>
+    <svg class="range" viewBox="0 0 400 60" preserveAspectRatio="none" height="60">
+      <path d="M0,60 L0,38 L55,14 L105,40 L160,8 L215,38 L270,16 L330,42 L400,20 L400,60 Z" fill="#F4F1EA"/>
+      <path d="M160,8 L150,20 L170,20 Z" fill="#8FC7D4" opacity="0.6"/>
+    </svg>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('itinerary', this)">Itinerary</button>
+    <button class="tab" onclick="showTab('actions', this)">Action List</button>
+    <button class="tab" onclick="showTab('hotels', this)">Hotels</button>
+    <button class="tab" onclick="showTab('transport', this)">Map &amp; Transport</button>
+  </div>
+
+  <!-- ============ ITINERARY PANEL ============ -->
+  <div class="panel active" id="itinerary">
+
+    <div class="phase"><span class="pin">●</span> Bergen · 2 nights</div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-bergen">Bergen</span><span class="day-name">Arrival &amp; walking tour</span><span class="day-meta">Sat Aug 29</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">11:15a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Land Bergen → Bybanen to Florida stop</div><div class="ev-detail">5-min walk to Moxy. ~51 NOK each. Download Skyss app first.</div></div></div>
+        <div class="ev"><div class="ev-time">~1:00p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Check in Moxy, shower</div><div class="ev-detail">Breakfast free — Titanium Bonvoy.</div></div></div>
+        <div class="ev"><div class="ev-time">~1:30p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Lunch — Daily Pot</div><div class="ev-detail">Casual soup/bowl spot, dairy-free friendly.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev-div"></div>
+        <div class="ev"><div class="ev-time">3:00p</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Walking tour — Bergen Past &amp; Present</div><div class="ev-detail">Bergenhus Fortress, Bryggen, old city, food tips. ~2hrs.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">5:30p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner — Pinocchio Mat og Vinbar</div><div class="ev-detail">Michelin-pedigree chef, small plates. Dairy-free friendly.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Early night — big hike tomorrow</div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-bergen">Bergen</span><span class="day-name">Ulriken → Vidden → Fløyen</span><span class="day-meta">Sun Aug 30</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">8:00a</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Breakfast at Moxy (free)</div><div class="ev-detail">Down by 8 for full selection. Protein bars as trail backup.</div></div></div>
+        <div class="ev"><div class="ev-time">~9:00a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Ulriksbussen shuttle → Ulriken643 cable car</div><div class="ev-detail">643m. 255 NOK/person one-way up. Buy at station.</div><div class="tags"><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~9:45a</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Vidden trail — Ulriken to Fløyen</div><div class="ev-detail">13km, ~5hrs. Red T markers. Rain layer. AllTrails offline.</div><div class="tags"><span class="tg tg-active">Active</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~12:30p</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Brushytten waffle hut</div><div class="ev-detail">~15 min before Fløyen. Open Sundays.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev"><div class="ev-time">~3:00p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Fløibanen funicular down</div><div class="ev-detail">One-way, 105 NOK/person. Pre-book on app. Back at Moxy ~4pm.</div></div></div>
+        <div class="ev-div"></div>
+        <div class="ev"><div class="ev-time">7:00p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner — Bryggeloftet &amp; Stuene</div><div class="ev-detail">Traditional Norwegian, Bergen fish soup. Budget 1hr 45min.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev"><div class="ev-time">8:45p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Walk to Magic Ice Bar — 14 min</div></div></div>
+        <div class="ev"><div class="ev-time">9:00p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Magic Ice Bar</div><div class="ev-detail">Ice gallery, welcome drink in an ice glass. Cap to the day.</div><div class="tags"><span class="tg tg-book">Booked</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="phase"><span class="pin">●</span> Aurland · 3 nights</div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Sognefjord ferry + Flåm Railway</span><span class="day-meta">Mon Aug 31</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">~8:00a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Norled ferry — Bergen → Flåm/Aurland</div><div class="ev-detail">~5.5hrs along the Sognefjord. Confirm Aurland stop. Stay on deck.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~1:30p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Check in Wangen Apartments, Aurland</div><div class="ev-detail">1-bed fjord-view w/ balcony. Sauna &amp; fire pit on the pier.</div><div class="tags"><span class="tg tg-book">Booked</span></div></div></div>
+        <div class="ev"><div class="ev-time">~3:00p</div><div class="ev-dot dot-purple"></div><div class="ev-body"><div class="ev-name">Flåm Railway — Flåm → Myrdal → Flåm</div><div class="ev-detail">Climbs 865m in 20km. Kjosfossen stop. Sit left going up.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner in Aurland / Flåm</div><div class="ev-detail">Self-catering kitchen at Wangen, or Ægir Brewpub in Flåm.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Kayak · Nærøyfjord · Stegastein</span><span class="day-meta">Tue Sep 1</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Morn</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Sea kayaking — Aurlandsfjord</div><div class="ev-detail">Half-day. Water-level fjord, cliff walls, waterfalls. No exp. needed.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-active">Active</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~2:30p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Shuttle to Gudvangen + Viking Village</div><div class="ev-detail">Njardarheimr — 150m from pier. Axe throwing, longhouse tour. ~1.5hrs.</div><div class="tags"><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">4:00p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Nærøyfjord cruise — Gudvangen → Flåm</div><div class="ev-detail">Silent electric boat, UNESCO fjord. Cruise back for golden-hour light.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~7:30p</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Stegastein viewpoint at sunset</div><div class="ev-detail">Platform 650m above the fjord. ~8pm sunset. Best shot of the trip.</div><div class="tags"><span class="tg tg-photo">Photo</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Hardangerfjord day trip</span><span class="day-meta">Wed Sep 2</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Morn</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Travel to Hardanger region</div><div class="ev-detail">"Hardangerfjord in a Nutshell" — transport + cruise + Vøringsfossen.</div><div class="tags"><span class="tg tg-todo">To book</span></div></div></div>
+        <div class="ev"><div class="ev-time">Mid</div><div class="ev-dot dot-purple"></div><div class="ev-body"><div class="ev-name">Vøringsfossen waterfall (182m)</div><div class="ev-detail">Viewing bridge over the gorge. Fruit harvest in the valley.</div><div class="tags"><span class="tg tg-photo">Photo</span><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">Aft</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Hardangerfjord cruise + farm stands</div><div class="ev-detail">Pastoral fjord, orchards, local cider (dairy-free).</div><div class="tags"><span class="tg tg-photo">Photo</span><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Return to Aurland — last fjord night</div></div></div>
+      </div>
+    </div>
+
+    <div class="phase"><span class="pin">●</span> Voss · 1 night</div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-voss">Voss</span><span class="day-name">Adrenaline day + overnight</span><span class="day-meta">Thu Sep 3</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Morn</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Travel Aurland/Flåm → Voss (~1hr)</div><div class="ev-detail">Check in Scandic Voss — back door onto station. Breakfast 6:30am.</div><div class="tags"><span class="tg tg-book">Booked</span></div></div></div>
+        <div class="ev"><div class="ev-time">Mid</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Adrenaline — choose one</div><div class="ev-detail">Paragliding · 1,381m zip-line (longest in Nordics) · rafting. Half-day.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner in Voss</div><div class="ev-detail">Early night — 7:28am train tomorrow.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="phase"><span class="pin">●</span> Oslo · 1 night</div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-oslo">Oslo</span><span class="day-name">Scenic railway + Oslo afternoon</span><span class="day-meta">Fri Sep 4</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">7:28a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Bergen Railway — Voss → Oslo (arr 1:05p)</div><div class="ev-detail">Crosses Hardangervidda at 1,300m. Sit on the right. ~$139/person.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~1:15p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Check in Citybox Oslo</div><div class="ev-detail">250m from Oslo S. Self check-in. Drop bags.</div><div class="tags"><span class="tg tg-book">Booked</span></div></div></div>
+        <div class="ev"><div class="ev-time">~1:45p</div><div class="ev-dot dot-purple"></div><div class="ev-body"><div class="ev-name">Opera House rooftop + Akershus Fortress</div><div class="ev-detail">Both free. Walk the marble roof, then the fjord-side fortress.</div><div class="tags"><span class="tg tg-free">Free</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~3:30p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Oslofjord island ferry (Hovedøya)</div><div class="ev-detail">Public ferry from Aker Brygge on a transit ticket. Swimming, ruins.</div><div class="tags"><span class="tg tg-active">Active</span><span class="tg tg-free">Transit</span></div></div></div>
+        <div class="ev"><div class="ev-time">~6:30p</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Vigeland Sculpture Park</div><div class="ev-detail">Free, 24/7. 200+ sculptures. Golden-hour light.</div><div class="tags"><span class="tg tg-free">Free</span><span class="tg tg-photo">Photo</span></div></div></div>
+        <div class="ev"><div class="ev-time">~8:00p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Farewell dinner — Aker Brygge or Vippa</div><div class="ev-detail">Waterfront restaurants or food court. Dairy-free friendly.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-oslo">Depart</span><span class="day-name">Fly home</span><span class="day-meta">Sat Sep 5</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">7:00a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Flytoget express → Gardermoen (20 min)</div><div class="ev-detail">3-min walk from Citybox to Oslo S. Flight departs 9:20am.</div></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ ACTION LIST PANEL ============ -->
+  <div class="panel" id="actions">
+    <div class="action-intro">
+      <div class="ai-title">What's left to book — and when</div>
+      <div class="ai-sub">Tap any item to check it off. Sell-out-risk items first; weather &amp; logistics closer to the trip. Trip starts Aug 28.</div>
+    </div>
+
+    <div class="win-head"><span class="win-badge w-now">Now → 2 weeks</span><div><div class="win-title">Book the scenic trains</div><div class="win-sub">Limited seats · prices rise as they fill</div></div></div>
+    <div class="todo-card">
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Bergen Railway — Voss → Oslo (7:28am, Sep 4)</div><div class="t-why">~$139/person, climbs as it fills. Right side for views.</div><div class="t-where">vy.no</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Flåm Railway (Aug 31 afternoon)</div><div class="t-why">World-famous, sells out in peak August.</div><div class="t-where">norwaysbest.com</div></div></div>
+    </div>
+
+    <div class="win-head"><span class="win-badge w-soon">2–4 weeks</span><div><div class="win-title">Ferries &amp; cruises</div><div class="win-sub">Popular, but more capacity than trains</div></div></div>
+    <div class="todo-card">
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Norled ferry — Bergen → Flåm/Aurland (Aug 31)</div><div class="t-why">Scenic transit day. Confirm it stops at Aurland. One daily departure.</div><div class="t-where">norled.no</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Nærøyfjord cruise — Gudvangen → Flåm (Sep 1, 4pm)</div><div class="t-why">"Shuttle there, cruise back" golden-hour plan. Confirm 16:00 departure.</div><div class="t-where">norwaysbest.com</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Hardangerfjord day trip (Sep 2)</div><div class="t-why">Package covers transport + cruise + Vøringsfossen.</div><div class="t-where">fjordtours.com</div></div></div>
+    </div>
+
+    <div class="win-head"><span class="win-badge w-mid">July → early Aug</span><div><div class="win-title">Activities (weather / flex)</div><div class="win-sub">Enough lead time, but keep flexibility</div></div></div>
+    <div class="todo-card">
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Sea kayaking — Aurlandsfjord (Sep 1 morning)</div><div class="t-why">Books up in peak season. Check cancellation/weather policy first.</div><div class="t-where">Flåm operators (Njord, FjordSafari)</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Voss adrenaline — choose &amp; book (Sep 3)</div><div class="t-why">Paragliding / zip-line / rafting. Pick a flexible-cancellation operator.</div><div class="t-where">Voss Active, Wild Voss</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Confirm Viking Village hours for Sep 1</div><div class="t-why">Verify opening hours align with the ~3:15pm Gudvangen window.</div></div></div>
+    </div>
+
+    <div class="win-head"><span class="win-badge w-late">Final 1–2 weeks</span><div><div class="win-title">Logistics &amp; day-of prep</div><div class="win-sub">Nothing sells out here</div></div></div>
+    <div class="todo-card">
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Download apps: Skyss, Fløibanen, Vy, AllTrails (offline Vidden map)</div><div class="t-why">Set up &amp; test before flying. Buy Bybanen tickets on the plane.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Decide: Bergen Card vs pay-as-you-go</div><div class="t-why">Leaning pay-as-you-go (~$29 cheaper). Buy same-day if you choose the card.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Note free-cancellation deadlines</div><div class="t-why">Wangen: Aug 28 · Scandic: 6pm day-of · Citybox: 1 day before.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Check weather &amp; pack layers</div><div class="t-why">Bergen weather drives the Vidden hike call. Pack a rain shell regardless.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Re-confirm dairy-free at booked restaurants</div><div class="t-why">Quick note to Pinocchio &amp; Bryggeloftet ahead of the dates.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ HOTELS PANEL ============ -->
+  <div class="panel" id="hotels">
+    <div class="section-title">Where you're sleeping</div>
+
+    <div class="hotel">
+      <div class="hotel-head"><span class="day-badge b-bergen">Bergen</span><span class="hotel-name">Moxy Bergen</span><span class="hotel-status">✓ Booked</span></div>
+      <div class="hotel-body">
+        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>2 nights</strong> · Aug 29–30</span></div>
+        <div class="hotel-row"><span class="hr-ic">📍</span><span>Central, 5-min walk from Florida Bybanen stop.</span></div>
+        <div class="hotel-row"><span class="hr-ic">☕</span><span>Breakfast free with Titanium Bonvoy status.</span></div>
+      </div>
+    </div>
+
+    <div class="hotel">
+      <div class="hotel-head"><span class="day-badge b-aurland">Aurland</span><span class="hotel-name">Wangen Apartments</span><span class="hotel-status">✓ Booked</span></div>
+      <div class="hotel-body">
+        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>3 nights</strong> · Aug 31–Sep 2 · 14,941 NOK total</span></div>
+        <div class="hotel-row"><span class="hr-ic">📍</span><span>On the Aurland pier. 1-bed, fjord view, balcony, kitchen.</span></div>
+        <div class="hotel-row"><span class="hr-ic">🔥</span><span>Sauna &amp; fire pit on the pier. Digital check-in from 3pm.</span></div>
+        <div class="hotel-row"><span class="hr-ic">⚠️</span><span>Free-cancellation deadline: <strong>Aug 28</strong> (72hrs prior).</span></div>
+      </div>
+    </div>
+
+    <div class="hotel">
+      <div class="hotel-head"><span class="day-badge b-voss">Voss</span><span class="hotel-name">Scandic Voss</span><span class="hotel-status">✓ Booked</span></div>
+      <div class="hotel-body">
+        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>1 night</strong> · Sep 3</span></div>
+        <div class="hotel-row"><span class="hr-ic">📍</span><span>Back door onto the train station — ideal for the 7:28am train.</span></div>
+        <div class="hotel-row"><span class="hr-ic">☕</span><span>Breakfast from 6:30am. Modern, clean, reliable.</span></div>
+        <div class="hotel-row"><span class="hr-ic">⚠️</span><span>Flexible rate: cancel free until 6pm day-of arrival.</span></div>
+      </div>
+    </div>
+
+    <div class="hotel">
+      <div class="hotel-head"><span class="day-badge b-oslo">Oslo</span><span class="hotel-name">Citybox Oslo</span><span class="hotel-status">✓ Booked</span></div>
+      <div class="hotel-body">
+        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>1 night</strong> · Sep 4 · ~$188</span></div>
+        <div class="hotel-row"><span class="hr-ic">📍</span><span>250m from Oslo S. 3-min walk to the airport train.</span></div>
+        <div class="hotel-row"><span class="hr-ic">🔑</span><span>Self check-in. Clean, modern, great value. No breakfast.</span></div>
+        <div class="hotel-row"><span class="hr-ic">⚠️</span><span>Cancel free until 1 day before arrival.</span></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <span class="ib-ic">🍽️</span>
+      <div class="ib-text"><strong>Dining booked:</strong> Pinocchio (Sat 5:30pm) · Bryggeloftet (Sun 7pm) · Magic Ice Bar (Sun 9pm). Daily Pot is a walk-in for Saturday lunch.</div>
+    </div>
+  </div>
+
+  <!-- ============ TRANSPORT PANEL ============ -->
+  <div class="panel" id="transport">
+    <div class="section-title">Getting around</div>
+
+    <div class="info-box">
+      <span class="ib-ic">🧭</span>
+      <div class="ib-text">The shape of the trip: fly into <strong>Bergen</strong>, ferry east up the <strong>Sognefjord</strong> to <strong>Aurland</strong>, over to <strong>Voss</strong>, then the scenic railway across the mountains to <strong>Oslo</strong> to fly home.</div>
+    </div>
+
+    <div class="route-card">
+      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Airport → Moxy (Aug 29)</div><div class="rl-detail">Bybanen Line 1 to Florida stop, 5-min walk. ~51 NOK each. Skyss app.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚠</div><div class="rl-body"><div class="rl-title">Ulriken cable car + Fløibanen funicular (Aug 30)</div><div class="rl-detail">Ulriksbussen shuttle to the cable car. Funicular one-way down (pre-book on app).</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">⛴️</div><div class="rl-body"><div class="rl-title">Bergen → Flåm/Aurland (Aug 31)</div><div class="rl-detail">Norled high-speed ferry, ~5.5hrs up the Sognefjord. Confirm Aurland drop-off.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland ↔ Flåm (daily)</div><div class="rl-detail">Public bus / shuttle, 10–20 min. Also reachable by fjord boat.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland/Flåm → Voss (Sep 3)</div><div class="rl-detail">~1hr by bus.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Voss → Oslo (Sep 4, 7:28am)</div><div class="rl-detail">Bergen Railway, arrives 1:05pm. Sit on the right for Hardangervidda.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Oslo S → Gardermoen (Sep 5, 7:00am)</div><div class="rl-detail">Flytoget express, 20 min. Flight departs 9:20am.</div></div></div>
+    </div>
+
+    <div class="section-title">The two-fjord plan (Sep 1)</div>
+    <div class="info-box">
+      <span class="ib-ic">⛵</span>
+      <div class="ib-text"><strong>Shuttle there, cruise back.</strong> Bus to Gudvangen (visit the Viking village), then the 4pm Nærøyfjord cruise back to Flåm — arriving in golden-hour light. The narrow, dramatic UNESCO fjord, saved for the best light of the day.</div>
+    </div>
+
+    <div class="section-title">Apps to download</div>
+    <div class="route-card">
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Skyss Billett</div><div class="rl-detail">Bergen buses + Bybanen tickets.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Fløibanen</div><div class="rl-detail">Funicular tickets.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Vy</div><div class="rl-detail">Bergen Railway (Voss → Oslo).</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">AllTrails</div><div class="rl-detail">Save the Vidden trail offline before flying.</div></div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Norge · the long way home</div>
+    <div class="footer-sub">CALEB &amp; MATTHEW · 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function checkPw() {
+    var val = document.getElementById('pw-input').value.trim().toLowerCase();
+    if (val === 'norway') {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      try { sessionStorage.setItem('norway_auth', '1'); } catch(e) {}
+    } else {
+      document.getElementById('gate-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+  try {
+    if (sessionStorage.getItem('norway_auth') === '1') {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+    }
+  } catch(e) {}
+
+  function showTab(id, btn) {
+    var panels = document.querySelectorAll('.panel');
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+    document.getElementById(id).classList.add('active');
+    var tabs = document.querySelectorAll('.tab');
+    for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleTodo(el) {
+    el.classList.toggle('done');
+  }
+</script>
+</body>
+</html>
