@@ -301,8 +301,9 @@
   <div class="tabs">
     <button class="tab active" onclick="showTab('itinerary', this)">Itinerary</button>
     <button class="tab" onclick="showTab('actions', this)">Action List</button>
+    <button class="tab" onclick="showTab('food', this)">Food</button>
     <button class="tab" onclick="showTab('hotels', this)">Hotels</button>
-    <button class="tab" onclick="showTab('transport', this)">Map &amp; Transport</button>
+    <button class="tab" onclick="showTab('transport', this)">Transport</button>
   </div>
 
   <!-- ============ ITINERARY PANEL ============ -->
@@ -370,7 +371,7 @@
     <div class="day">
       <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Kayaking + Viking Village + Nærøyfjord cruise</span><span class="day-meta">Wed Sep 2 · N5</span></div>
       <div class="day-body">
-        <div class="ev"><div class="ev-time">10:00</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Sea kayaking — Aurlandsfjord (Njord Kayak Center)</div><div class="ev-detail">3-hour guided tour. Water-level fjord, cliff walls, waterfalls. All gear provided. NOK 2,470 for 2 adults.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">10:00</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Sea kayaking — Aurlandsfjord (Njord Kayak Center)</div><div class="ev-detail">3-hour guided tour. Water-level fjord, cliff walls, waterfalls. All gear provided. Book directly at njord.com — confirm weather cancellation policy before paying.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-active">Active</span></div></div></div>
         <div class="ev"><div class="ev-time">~13:00</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Back in Flåm/Aurland — lunch</div><div class="ev-detail">2–3 hour window before the afternoon shuttle.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
         <div class="ev"><div class="ev-time">~14:30</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Shuttle Aurland/Flåm → Gudvangen (~30 min)</div></div></div>
         <div class="ev"><div class="ev-time">~15:00</div><div class="ev-dot dot-purple"></div><div class="ev-body"><div class="ev-name">Njardarheimr Viking Village, Gudvangen</div><div class="ev-detail">150m from the ferry pier. Axe throwing, archery, blacksmithing, guided longhouse tour. ~1.5hrs.</div><div class="tags"><span class="tg tg-active">Active</span></div></div></div>
@@ -386,8 +387,8 @@
       <div class="day-head"><span class="day-badge b-voss">Voss</span><span class="day-name">Adrenaline day + overnight</span><span class="day-meta">Thu Sep 3</span></div>
       <div class="day-body">
         <div class="ev"><div class="ev-time">Morn</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Travel Aurland/Flåm → Voss (~1hr)</div><div class="ev-detail">Check in Scandic Voss — back door onto station. Breakfast 6:30am.</div><div class="tags"><span class="tg tg-book">Booked</span></div></div></div>
-        <div class="ev"><div class="ev-time">Mid</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Adrenaline — choose one</div><div class="ev-detail">Paragliding · 1,381m zip-line (longest in Nordics) · rafting. Half-day.</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-active">Active</span></div></div></div>
-        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner in Voss</div><div class="ev-detail">Early night — 7:28am train tomorrow.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
+        <div class="ev"><div class="ev-time">15:00</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Tandem paragliding — Voss Hang- og Paragliderklubb</div><div class="ev-detail">Jog a few steps downhill from Hangurstoppen and the wing lifts you off the ground. ~20 min gliding over Voss, landing at Vangsvatnet lake in town centre. NOK 3,000/person — payment on-site, not charged at booking. Gondola ticket extra (~NOK 250/person). Book second slot for Matthew separately. vosshpk.no/tandem</div><div class="tags"><span class="tg tg-todo">To book</span><span class="tg tg-active">Active</span></div></div></div>
+        <div class="ev"><div class="ev-time">Eve</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner — Hangurstoppen Restaurant</div><div class="ev-detail">At the top of the Voss Gondol. Take the gondola up after paragliding — the same mountain, different experience at dusk. Check last gondola departure time down before you go.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-food">Food</span></div></div></div>
       </div>
     </div>
 
@@ -425,27 +426,30 @@
     <div class="todo-card">
       <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Bergen Railway — Voss stasjon → Oslo S (7:28am, Sep 4)</div><div class="t-why">Car 4, seats 139/140. ~$153 total (NOK 789 + 49). Audio guide included.</div><div class="t-where">vy.no — BOOKED</div></div></div>
       <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Norled ferry — Bergen → Aurland kai (08:00 dep, arr 13:12, Aug 31)</div><div class="t-why">Scenic transit day. Arrives Aurland 13:12.</div><div class="t-where">norled.no — BOOKED</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Njord kayaking — Aurlandsfjord (Sep 2, 10:00am, 2 adults)</div><div class="t-why">NOK 2,470 total. 3-hour guided tour. All gear included.</div><div class="t-where">njord.com — BOOKED</div></div></div>
       <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Scandic Voss (Sep 3, 1 night)</div><div class="t-why">NOK 2,422 (~$231 total). Back door onto Voss station. Breakfast 6:30am.</div><div class="t-where">BOOKED — pay at property</div></div></div>
       <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Moxy Bergen (2 nights, Aug 29–30)</div><div class="t-why">Paid with Bonvoy points — no cash cost. Breakfast free via Titanium status.</div><div class="t-where">BOOKED</div></div></div>
+      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Hangurstoppen Restaurant dinner — Sep 3, Voss</div><div class="t-why">Mountain-top restaurant at the Voss Gondol summit. Gondola up after paragliding.</div><div class="t-where">BOOKED</div></div></div>
     </div>
 
     <div class="win-head"><span class="win-badge w-soon">2–4 weeks</span><div><div class="win-title">Book soon</div><div class="win-sub">Popular in peak season</div></div></div>
     <div class="todo-card">
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Nærøyfjord cruise — Gudvangen → Flåm (Sep 2, 17:30)</div><div class="t-why">Silent electric boat, UNESCO fjord. Shuttle to Gudvangen, cruise back in golden-hour light. Arrives Flåm 19:30.</div><div class="t-where">norwaysbest.com</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Stegastein shuttle — Aug 31, 20:00 departure from Aurland bus stop F</div><div class="t-why">Last departure of the day, arrives Stegastein 20:30 at sunset. ~$54pp round trip.</div><div class="t-where">norwaysbest.com</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Taste of the Fjord — Sep 1, 3pm slot, 2 adults</div><div class="t-why">100% non-refundable — confirm Sep 1 date is firm before paying. Vikjavegen 9, Flåm. $81.33/pp.</div><div class="t-where">Contact The Fjord Farm directly</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Hotel Aurlandsfjord dinner reservation — Aug 31, ~18:00</div><div class="t-why">Table for 2. Note that one guest has a cow's milk dairy allergy. Restaurant open 17:00–21:00 daily.</div><div class="t-where">Contact hotel directly</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Voss tandem paragliding — Sep 3, 15:00 (×2 bookings, one per person)</div><div class="t-why">NOK 3,000/person, payment on-site. Payment NOT charged at booking. Gondola ticket ~NOK 250/person extra — confirm whether bundled. Book 2 separate slots.</div><div class="t-where">vosshpk.no/tandem</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Flåm → Gudvangen shuttle — Sep 2, 15:15 from Flåm bus stop A/B</div><div class="t-why">20 min ride, arrives Gudvangen 15:35. Ticket valid for booked departure only — must book in advance.</div><div class="t-where">norwaysbest.com</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Nærøyfjord cruise — Gudvangen → Flåm, Sep 2, 17:30</div><div class="t-why">Arrives Flåm 19:30 in golden-hour light. Silent electric boat, UNESCO fjord.</div><div class="t-where">norwaysbest.com</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Stegastein shuttle — Aug 31, 20:00 from Aurland bus stop F</div><div class="t-why">Arrives Stegastein 20:30 at sunset (~8:30pm). Round trip ~90 min.</div><div class="t-where">norwaysbest.com</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Taste of the Fjord — Sep 1, 3pm slot, 2 adults</div><div class="t-why">100% non-refundable — confirm Sep 1 date is firm before paying. $81.33/pp. Vikjavegen 9, Flåm.</div><div class="t-where">Contact The Fjord Farm directly</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Hotel Aurlandsfjord dinner reservation — Aug 31, ~18:00</div><div class="t-why">Table for 2. Note one guest has cow's milk dairy allergy. Open 17:00–21:00 daily.</div><div class="t-where">Contact hotel directly</div></div></div>
     </div>
 
-    <div class="win-head"><span class="win-badge w-mid">July → early Aug</span><div><div class="win-title">Activities &amp; Sep 1 logistics</div><div class="win-sub">Enough lead time, but keep flexibility</div></div></div>
+    <div class="win-head"><span class="win-badge w-mid">July → early Aug</span><div><div class="win-title">Activities &amp; logistics</div><div class="win-sub">Enough lead time, but keep flexibility</div></div></div>
     <div class="todo-card">
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Flåm Railway — ONE-WAY up, Sep 1 (~08:20 or 09:35)</div><div class="t-why">Booking opens ~late June/early July (60 days prior). One-way up, hike down — do NOT book round trip. Sit right side for Kjosfossen. Confirm morning Aurland→Flåm shuttle or book a taxi for ~07:45.</div><div class="t-where">norwaysbest.com</div></div></div>
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Confirm morning Aurland → Flåm shuttle/taxi for Sep 1 railway (early departure ~07:45–08:00)</div><div class="t-why">Need to catch the first or second morning train at Flåm station.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Voss adrenaline — choose &amp; book (Sep 3)</div><div class="t-why">Paragliding / zip-line / rafting. Pick a flexible-cancellation operator.</div><div class="t-where">Voss Active, Wild Voss</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Sea kayaking — Aurlandsfjord (Sep 2, 10:00am, 2 adults)</div><div class="t-why">Books up in peak season. Confirm weather/cancellation policy. NOK ~2,470 for 2 adults. Book directly at njord.com.</div><div class="t-where">njord.com</div></div></div>
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Confirm Viking Village hours for Sep 2 (~3pm window)</div><div class="t-why">Verify opening hours align with the ~15:00 Gudvangen arrival after the cruise shuttle.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Ægir Gastropub Sep 2 evening — check if reservation needed</div><div class="t-why">Dinner after the Nærøyfjord cruise ~20:00. Food until 22:00. Busy harbor location in peak season.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Restaurant Utsyn at Fretheim Hotel — confirm open Tue Sep 1 evening</div><div class="t-why">Sep 1 light dinner option. 5.0 rating (14 reviews). Verify hours for early September.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Ægir Gastropub Sep 2 — check if reservation needed</div><div class="t-why">Dinner ~20:00, food until 22:00. Busy harbor location in peak season.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Restaurant Utsyn at Fretheim Hotel — confirm open Wed Sep 2 evening</div><div class="t-why">Sep 1 light dinner option. 5.0 rating (14 reviews). Verify early September hours.</div></div></div>
+      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Check last gondola time down from Hangurstoppen</div><div class="t-why">Essential before Sep 3 dinner. Don't get stranded at the top after dinner.</div></div></div>
     </div>
 
     <div class="win-head"><span class="win-badge w-late">Final 1–2 weeks</span><div><div class="win-title">Logistics &amp; day-of prep</div><div class="win-sub">Nothing sells out here</div></div></div>
@@ -455,6 +459,89 @@
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Note free-cancellation deadlines</div><div class="t-why">Wangen: Aug 28 · Scandic: 6pm day-of · Citybox: 1 day before.</div></div></div>
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Check weather &amp; pack layers</div><div class="t-why">Bergen weather drives the Vidden hike call. Pack a rain shell regardless.</div></div></div>
       <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Re-confirm dairy-free at booked restaurants</div><div class="t-why">Quick note to Pinocchio &amp; Bryggeloftet ahead of the dates.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ FOOD PANEL ============ -->
+  <div class="panel" id="food">
+    <div class="action-intro">
+      <div class="ai-title">Where you're eating</div>
+      <div class="ai-sub">Day-by-day meal plan. Booked spots, walk-ins, and a few meals still undecided 🔲 to sort out.</div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-bergen">Bergen</span><span class="day-name">Arrival day</span><span class="day-meta">Sat Aug 29</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">None — arriving 11:15am</div><div class="ev-detail">Grab something at the airport or on the flight.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Daily Pot</div><div class="ev-detail">Walk-in, no reservation needed. Casual soup and bowl spot near the city centre. Dairy-free friendly.</div><div class="tags"><span class="tg tg-free">Walk-in</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Pinocchio Mat og Vinbar — 5:30pm</div><div class="ev-detail">Michelin-pedigree chef, small sharing plates, hidden alley near the waterfront. Dairy-free friendly.</div><div class="tags"><span class="tg tg-book">Booked ✅</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-bergen">Bergen</span><span class="day-name">Vidden hike day</span><span class="day-meta">Sun Aug 30</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Moxy Bergen — free with Titanium Bonvoy status</div><div class="ev-detail">Continental buffet. Be downstairs by 8:00am for full selection before the hike.</div></div></div>
+        <div class="ev"><div class="ev-time">Mid-hike</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Brushytten waffle hut</div><div class="ev-detail">~15 min before Fløyen summit, open Sundays. A well-earned mid-trail break.</div><div class="tags"><span class="tg tg-free">Walk-in</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Bryggeloftet &amp; Stuene — 7:00pm</div><div class="ev-detail">Traditional Norwegian, Bergen fish soup. Budget 1hr 45min.</div><div class="tags"><span class="tg tg-book">Booked ✅</span></div></div></div>
+        <div class="ev"><div class="ev-time">Late</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Magic Ice Bar — 9:00pm</div><div class="ev-detail">Welcome drink served in an ice glass included with entry.</div><div class="tags"><span class="tg tg-book">Booked ✅</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Ferry + Skjerdal day</span><span class="day-meta">Mon Aug 31</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Ferry</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Small kiosk on the Norled ferry</div><div class="ev-detail">Drinks and light snacks available on board. 5.5hr crossing so bring extra snacks.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Light lunch in Aurland (~2:00pm)</div><div class="ev-detail">Keep it light, Skjerdal pancakes are ahead. Marianne Bakeri &amp; Kafé in Aurland is a good option.</div></div></div>
+        <div class="ev"><div class="ev-time">Afternoon</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Skjerdal Stølsysteri (~3:30–5:00pm)</div><div class="ev-detail">Fresh pancakes with goat cheese, fjord views. Seasonal farm café confirmed open Aug 31.</div><div class="tags"><span class="tg tg-free">Walk-in</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Hotel Aurlandsfjord main restaurant — ~18:00</div><div class="ev-detail">Casual Norwegian à la carte, open 17:00–21:00. Dairy-free friendly. Reservation recommended — note cow's milk dairy allergy.</div><div class="tags"><span class="tg tg-todo">To reserve</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Railway + Rallarvegen day</span><span class="day-meta">Tue Sep 1</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Self-cater at Wangen or grab in Aurland (~7:45am)</div><div class="ev-detail">Wangen has a fully equipped kitchen. Pack trail snacks before you leave — there are no cafés on the Rallarvegen.</div></div></div>
+        <div class="ev"><div class="ev-time">On trail</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Pack your own food and water</div><div class="ev-detail">No cafés or stops on the Rallarvegen hike. Bring enough for a 4–5 hour walk.</div></div></div>
+        <div class="ev"><div class="ev-time">Tasting</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Taste of the Fjord — 3:00pm</div><div class="ev-detail">Guided 1hr tasting of local goat cheese, cured meats, seasonal stew, carrot cake at The Fjord Farm above Flåm. $81.33/pp. 100% non-refundable.</div><div class="tags"><span class="tg tg-todo">To book</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Restaurant Utsyn at Fretheim Hotel, Flåm (~5:00pm)</div><div class="ev-detail">Light dinner after the tasting. 5.0 rating, relaxed setting.</div><div class="tags"><span class="tg tg-todo">To confirm hours — backup: Ægir Beer Garden</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-aurland">Aurland</span><span class="day-name">Kayak + cruise day</span><span class="day-meta">Wed Sep 2</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Self-cater at Wangen</div><div class="ev-detail">Fully equipped kitchen. Last morning at Wangen so use up any groceries.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">In Flåm or Aurland after kayaking (~1:00pm)</div><div class="ev-detail">2–3hr window before the afternoon shuttle to Gudvangen.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch?</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">No restaurant decided for Sep 2 lunch</div><div class="ev-detail">Options discussed: Bakkastova (noted as more of a daytime café), Flåmstova Restaurant, or self-catering.</div><div class="tags"><span class="tg tg-todo">Undecided 🔲</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Ægir Gastropub, Flåm — ~8:00pm</div><div class="ev-detail">Viking-themed brewpub right at the harbor. Food served until 10:00pm.</div><div class="tags"><span class="tg tg-todo">Check reservation needed</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-voss">Voss</span><span class="day-name">Travel + paragliding day</span><span class="day-meta">Thu Sep 3</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Self-cater at Wangen or grab in Aurland</div><div class="ev-detail">Before departing for Voss. Check out by 10:00am.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">In Voss after arriving (~midday)</div><div class="ev-detail">Options: Vossevangen Grill &amp; Steakhouse (also dinner option), Vangen Café (casual local diner), or self-serve at a bakery.</div><div class="tags"><span class="tg tg-todo">Undecided 🔲</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Hangurstoppen Restaurant</div><div class="ev-detail">Gondola up after paragliding. Mountain-top restaurant with fjord views. Take the gondola up, check last gondola time down before going.</div><div class="tags"><span class="tg tg-book">Booked ✅</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-oslo">Oslo</span><span class="day-name">Railway + Oslo day</span><span class="day-meta">Fri Sep 4</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Scandic Voss — buffet from 6:30am</div><div class="ev-detail">Quick breakfast before the 7:28am train. No café car on the Bergen Railway — bring snacks and a drink for the 5.5hr journey.</div></div></div>
+        <div class="ev"><div class="ev-time">On train</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">No café car on the Bergen Railway</div><div class="ev-detail">Bring food and drinks from Scandic or pick up at Voss station before boarding.</div></div></div>
+        <div class="ev"><div class="ev-time">Lunch</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">In Oslo after arriving at 1:05pm</div><div class="ev-detail">No options discussed yet. Near Citybox/Oslo S — plenty of options in the city centre.</div><div class="tags"><span class="tg tg-todo">Undecided 🔲</span></div></div></div>
+        <div class="ev"><div class="ev-time">Dinner</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Farewell dinner — Aker Brygge or Vippa</div><div class="ev-detail">Aker Brygge: upscale waterfront restaurants, great atmosphere. Vippa: international food court, excellent value, dairy-free friendly.</div><div class="tags"><span class="tg tg-todo">Undecided 🔲</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="day-head"><span class="day-badge b-oslo">Depart</span><span class="day-name">Fly home</span><span class="day-meta">Sat Sep 5</span></div>
+      <div class="day-body">
+        <div class="ev"><div class="ev-time">Breakfast</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Citybox Oslo has no breakfast included</div><div class="ev-detail">Grab something at Oslo S (3-min walk) or at Oslo Gardermoen airport before the 9:20am flight.</div></div></div>
+      </div>
     </div>
   </div>
 
@@ -485,7 +572,7 @@
     <div class="hotel">
       <div class="hotel-head"><span class="day-badge b-voss">Voss</span><span class="hotel-name">Scandic Voss</span><span class="hotel-status">✓ Booked</span></div>
       <div class="hotel-body">
-        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>1 night</strong> · Sep 3 · NOK 2,422 (~$231 total)</span></div>
+        <div class="hotel-row"><span class="hr-ic">●</span><span><strong>1 night</strong> · Sep 3 · NOK 2,422 (~$231 total) · pay at property</span></div>
         <div class="hotel-row"><span class="hr-ic">📍</span><span>Back door onto the train station — ideal for the 7:28am train.</span></div>
         <div class="hotel-row"><span class="hr-ic">☕</span><span>Breakfast from 6:30am. Modern, clean, reliable.</span></div>
         <div class="hotel-row"><span class="hr-ic">⚠️</span><span>Flexible rate: cancel free until 6pm day-of arrival.</span></div>
@@ -504,56 +591,45 @@
 
     <div class="info-box">
       <span class="ib-ic">🍽️</span>
-      <div class="ib-text"><strong>Dining booked:</strong> Pinocchio (Sat Aug 29, 5:30pm) · Bryggeloftet (Sun Aug 30, 7pm) · Magic Ice Bar (Sun Aug 30, 9pm). Aurland dinners: Hotel Aurlandsfjord (Aug 31) · Ægir Gastropub (Sep 2). Daily Pot is a walk-in for Saturday lunch.</div>
+      <div class="ib-text"><strong>Dinners booked:</strong> Pinocchio (Aug 29, 5:30pm) · Bryggeloftet (Aug 30, 7pm) · Magic Ice Bar (Aug 30, 9pm) · Hangurstoppen Restaurant, Voss (Sep 3). See the Food tab for full meal planning.</div>
     </div>
   </div>
 
   <!-- ============ TRANSPORT PANEL ============ -->
   <div class="panel" id="transport">
-    <div class="section-title">Getting around</div>
-
-    <div class="info-box">
-      <span class="ib-ic">🧭</span>
-      <div class="ib-text">The shape of the trip: fly into <strong>Bergen</strong>, ferry east up the <strong>Sognefjord</strong> to <strong>Aurland</strong>, over to <strong>Voss</strong>, then the scenic railway across the mountains to <strong>Oslo</strong> to fly home.</div>
-    </div>
-
+    <div class="section-title">The Route</div>
     <div class="route-card">
-      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Airport → Moxy (Aug 29)</div><div class="rl-detail">Bybanen Line 1 to Florida stop, 5-min walk. ~51 NOK each. Skyss app.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">✈️</div><div class="rl-body"><div class="rl-title">Boston → Bergen · Wed Aug 29, arr 11:15am · Booked ✅</div><div class="rl-detail">Delta via Atlanta, land Bergen Airport.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚠</div><div class="rl-body"><div class="rl-title">Ulriken cable car + Fløibanen funicular (Aug 30)</div><div class="rl-detail">Ulriksbussen shuttle to the cable car. Funicular one-way down (pre-book on app).</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚋</div><div class="rl-body"><div class="rl-title">Bybanen Line 1 · Aug 29, after landing · Pay on day (~51 NOK each)</div><div class="rl-detail">Airport → Florida stop → 5-min walk to Moxy. Skyss app.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">⛴️</div><div class="rl-body"><div class="rl-title">Bergen → Aurland kai (Aug 31) ✓ Booked</div><div class="rl-detail">Norled ferry departs 08:00, arrives Aurland 13:12. ~5hrs up the Sognefjord. Single transit — no onward railway this day.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">⛴️</div><div class="rl-body"><div class="rl-title">Norled ferry · Mon Aug 31, 08:00–13:12 · Booked ✅</div><div class="rl-detail">Bergen Strandkaiterminal → Aurland kai. 5.5hrs up the Sognefjord.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland ↔ Flåm (daily)</div><div class="rl-detail">Public bus / shuttle, 10–20 min. Also reachable by fjord boat.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Stegastein shuttle · Aug 31, 20:00 · To book (norwaysbest.com)</div><div class="rl-detail">Departs Aurland bus stop F. Arrives Stegastein 20:30. Round trip.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚞</div><div class="rl-body"><div class="rl-title">Sep 1 — Flåm Railway up + Rallarvegen hike down</div><div class="rl-detail">Early shuttle/taxi Aurland→Flåm (~07:45). Flåm Railway ONE-WAY up to Myrdal (08:20 or 09:35). Full ~20km Rallarvegen valley hike all the way down to Flåm (4–5hrs, all downhill, waterfalls throughout). Sit right side going up for Kjosfossen.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland → Flåm shuttle · Sep 1, ~07:45 · Pay on day</div><div class="rl-detail">Early morning for Flåm Railway. 15 min. Confirm times or book a taxi.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚣</div><div class="rl-body"><div class="rl-title">Sep 2 — Kayaking + Viking Village + Nærøyfjord cruise</div><div class="rl-detail">Kayak from Aurland 10:00–13:00. Shuttle to Gudvangen (~14:30) for the Viking village. Nærøyfjord cruise Gudvangen→Flåm at 17:30, arriving 19:30 in golden-hour light.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚂</div><div class="rl-body"><div class="rl-title">Flåm Railway (one-way up) · Sep 1, ~08:20 or 09:35 · To book early July</div><div class="rl-detail">Flåm → Myrdal. 1hr. Sit right side for Kjosfossen. Book when timetable opens.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland/Flåm → Voss (Sep 3)</div><div class="rl-detail">~1hr by bus.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Flåm → Gudvangen shuttle · Sep 2, 15:15 · To book (norwaysbest.com)</div><div class="rl-detail">Bus stop A/B. Arrives Gudvangen 15:35. Ticket valid for booked time only.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Voss stasjon → Oslo S (Sep 4, 7:28am) ✓ Booked</div><div class="rl-detail">Bergen Railway, arrives 13:05. Car 4, seats 139/140 (right side). Audio guide included. Crosses Hardangervidda at 1,300m.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">⛴️</div><div class="rl-body"><div class="rl-title">Nærøyfjord cruise · Sep 2, 17:30 · To book (norwaysbest.com)</div><div class="rl-detail">Gudvangen → Flåm. Arrives 19:30.</div></div></div>
       <div class="route-connector"></div>
-      <div class="route-leg"><div class="rl-icon">🚆</div><div class="rl-body"><div class="rl-title">Oslo S → Gardermoen (Sep 5, 7:00am)</div><div class="rl-detail">Flytoget express, 20 min. Flight departs 9:20am.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">🚌</div><div class="rl-body"><div class="rl-title">Aurland/Flåm → Voss · Sep 3, morning · Pay on day</div><div class="rl-detail">~1hr by bus.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚂</div><div class="rl-body"><div class="rl-title">Bergen Railway · Fri Sep 4, 07:28–13:05 · Booked ✅</div><div class="rl-detail">Voss stasjon → Oslo S. Car 4, seats 139/140, right side. No café car — bring food. Audio guide included.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">🚇</div><div class="rl-body"><div class="rl-title">Flytoget · Sat Sep 5, 07:00 · Pay on day (~230 NOK each)</div><div class="rl-detail">Oslo S → Gardermoen. 20 min. 3-min walk from Citybox.</div></div></div>
+      <div class="route-connector"></div>
+      <div class="route-leg"><div class="rl-icon">✈️</div><div class="rl-body"><div class="rl-title">Oslo → Boston · Sat Sep 5, departs 09:20 · Booked ✅</div></div></div>
     </div>
 
-    <div class="section-title">The Nærøyfjord plan (Sep 2)</div>
-    <div class="info-box">
-      <span class="ib-ic">⛵</span>
-      <div class="ib-text"><strong>Shuttle there, cruise back.</strong> Shuttle to Gudvangen for the Viking village, then the 17:30 Nærøyfjord cruise back to Flåm — arriving at 19:30 in golden-hour light. The narrow, dramatic UNESCO fjord at its best.</div>
-    </div>
-
-    <div class="info-box">
-      <span class="ib-ic">🏔️</span>
-      <div class="ib-text"><strong>Stegastein (Aug 31 evening).</strong> Shuttle from Aurland bus stop F at 20:00, arrives Stegastein 20:30. Late August sunset is ~8:30pm — no taxi needed for golden hour. Round trip ~90 min. Book at norwaysbest.com.</div>
-    </div>
-
-    <div class="section-title">Apps to download</div>
+    <div class="section-title">Apps to Download</div>
     <div class="route-card">
-      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Skyss Billett</div><div class="rl-detail">Bergen buses + Bybanen tickets.</div></div></div>
-      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Fløibanen</div><div class="rl-detail">Funicular tickets.</div></div></div>
-      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Vy</div><div class="rl-detail">Bergen Railway (Voss → Oslo).</div></div></div>
-      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">AllTrails</div><div class="rl-detail">Save the Vidden trail offline before flying.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Skyss Billett</div><div class="rl-detail">Bergen Bybanen and buses.</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Fløibanen</div><div class="rl-detail">Funicular ticket (pre-book one-way down, Aug 30).</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Vy</div><div class="rl-detail">Bergen Railway (already booked, use for ticket access).</div></div></div>
+      <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">AllTrails</div><div class="rl-detail">Save Vidden trail offline before flying.</div></div></div>
     </div>
   </div>
 
