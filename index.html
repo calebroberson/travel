@@ -298,6 +298,89 @@
     .days-wrap { padding: 1rem 0.75rem 2rem; }
     .events { padding: 0.5rem 0.85rem 0.65rem; }
   }
+
+  /* TAB NAVIGATION */
+  .tab-nav {
+    background: #fff;
+    display: flex;
+    border-bottom: 2px solid #e0d8cc;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #3C3B6E;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    border-bottom-color: #B22234;
+    color: #B22234;
+  }
+  .tab-btn:hover:not(.active) { background: #f8f5f0; }
+
+  /* PACKING LIST */
+  .pack-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0d8cc;
+  }
+  .pack-header {
+    background: #3C3B6E;
+    padding: 0.8rem 1.1rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+  .pack-items { padding: 0.4rem 1rem 0.6rem; }
+  .pack-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0;
+    border-bottom: 0.5px solid #f0ece4;
+  }
+  .pack-item:last-child { border-bottom: none; }
+  .pack-item input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: #3C3B6E;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .pack-item label {
+    font-size: 0.88rem;
+    color: #1a1a2e;
+    cursor: pointer;
+    line-height: 1.35;
+  }
+  .pack-item input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    color: #bbb;
+  }
+  .reset-wrap {
+    text-align: center;
+    padding: 0.5rem 0 1.5rem;
+  }
+  .reset-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 0.72rem;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-transform: uppercase;
+  }
+  .reset-btn:hover { color: #B22234; }
 </style>
 </head>
 <body>
@@ -323,6 +406,13 @@
     <div class="hero-sub">July 1–5, 2026</div>
     <div class="vulcan-badge">⚒ The Magic City ⚒</div>
   </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="itinerary" onclick="switchTab('itinerary')">Itinerary</button>
+    <button class="tab-btn" data-tab="packing" onclick="switchTab('packing')">Packing List</button>
+  </div>
+
+  <div id="tab-itinerary">
 
   <div class="stripe"></div>
 
@@ -709,6 +799,50 @@
     <div class="footer-stars">★ ★ ★ ★ ★</div>
   </div>
 
+  </div><!-- end tab-itinerary -->
+
+  <div id="tab-packing" style="display:none">
+    <div class="days-wrap">
+
+      <div class="pack-card">
+        <div class="pack-header">Clothing</div>
+        <div class="pack-items">
+          <div class="pack-item"><input type="checkbox" id="pk0" onchange="savePacking()"><label for="pk0">Breathable t-shirts / casual tops (4–5)</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk1" onchange="savePacking()"><label for="pk1">Shorts (2–3 pairs)</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk2" onchange="savePacking()"><label for="pk2">One pair of jeans or lightweight pants</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk3" onchange="savePacking()"><label for="pk3">Swimsuit</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk4" onchange="savePacking()"><label for="pk4">1–2 "going out" outfits (dinners, Lexicon, cocktail bar)</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk5" onchange="savePacking()"><label for="pk5">Comfortable walking shoes</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk6" onchange="savePacking()"><label for="pk6">Sandals or flip-flops</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk7" onchange="savePacking()"><label for="pk7">Sleepwear, socks, undergarments</label></div>
+        </div>
+      </div>
+
+      <div class="pack-card">
+        <div class="pack-header">Weather Essentials</div>
+        <div class="pack-items">
+          <div class="pack-item"><input type="checkbox" id="pk8" onchange="savePacking()"><label for="pk8">Sunglasses</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk9" onchange="savePacking()"><label for="pk9">Ball cap or sun hat</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk10" onchange="savePacking()"><label for="pk10">Packable rain layer or compact umbrella</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk11" onchange="savePacking()"><label for="pk11">One light layer for evening</label></div>
+        </div>
+      </div>
+
+      <div class="pack-card">
+        <div class="pack-header">Practical</div>
+        <div class="pack-items">
+          <div class="pack-item"><input type="checkbox" id="pk12" onchange="savePacking()"><label for="pk12">Refillable water bottle</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk13" onchange="savePacking()"><label for="pk13">Phone charger</label></div>
+          <div class="pack-item"><input type="checkbox" id="pk14" onchange="savePacking()"><label for="pk14">Toiletries / personal medications</label></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="reset-wrap">
+      <button class="reset-btn" onclick="resetPacking()">Reset list</button>
+    </div>
+  </div><!-- end tab-packing -->
+
 </div>
 
 <script>
@@ -718,6 +852,7 @@
       document.getElementById('gate').style.display = 'none';
       document.getElementById('main').style.display = 'block';
       sessionStorage.setItem('bham_auth', '1');
+      loadPacking();
     } else {
       document.getElementById('gate-error').style.display = 'block';
       document.getElementById('pw-input').value = '';
@@ -728,6 +863,42 @@
   if (sessionStorage.getItem('bham_auth') === '1') {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('main').style.display = 'block';
+    loadPacking();
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tab-itinerary').style.display = tab === 'itinerary' ? 'block' : 'none';
+    document.getElementById('tab-packing').style.display = tab === 'packing' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+  }
+
+  var PACK_KEY = 'bham_packing_v1';
+
+  function savePacking() {
+    var state = {};
+    document.querySelectorAll('#tab-packing input[type="checkbox"]').forEach(function(cb) {
+      state[cb.id] = cb.checked;
+    });
+    localStorage.setItem(PACK_KEY, JSON.stringify(state));
+  }
+
+  function loadPacking() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(PACK_KEY) || '{}');
+      document.querySelectorAll('#tab-packing input[type="checkbox"]').forEach(function(cb) {
+        if (saved[cb.id] !== undefined) cb.checked = saved[cb.id];
+      });
+    } catch(e) {}
+  }
+
+  function resetPacking() {
+    if (!confirm('Clear all checkboxes and reset your packing list?')) return;
+    document.querySelectorAll('#tab-packing input[type="checkbox"]').forEach(function(cb) {
+      cb.checked = false;
+    });
+    localStorage.removeItem(PACK_KEY);
   }
 </script>
 </body>
