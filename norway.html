@@ -300,11 +300,9 @@
   <!-- TABS -->
   <div class="tabs">
     <button class="tab active" onclick="showTab('itinerary', this)">Itinerary</button>
-    <button class="tab" onclick="showTab('actions', this)">Action List</button>
     <button class="tab" onclick="showTab('food', this)">Food</button>
     <button class="tab" onclick="showTab('hotels', this)">Hotels</button>
     <button class="tab" onclick="showTab('transport', this)">Transport</button>
-    <button class="tab" onclick="showTab('questions', this)">Questions</button>
   </div>
 
   <!-- ============ ITINERARY PANEL ============ -->
@@ -414,47 +412,6 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- ============ ACTION LIST PANEL ============ -->
-  <div class="panel" id="actions">
-    <div class="action-intro">
-      <div class="ai-title">What's left to book — and when</div>
-      <div class="ai-sub">Tap any item to check it off. Sell-out-risk items first; weather &amp; logistics closer to the trip. Trip starts Aug 28.</div>
-    </div>
-
-    <div class="win-head"><span class="win-badge w-now">Now → 2 weeks</span><div><div class="win-title">Already booked ✓</div><div class="win-sub">Confirmed — no action needed</div></div></div>
-    <div class="todo-card">
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Bergen Railway — Voss stasjon → Oslo S (7:28am, Sep 4)</div><div class="t-why">Car 4, seats 139/140. ~$153 total (NOK 789 + 49). Audio guide included.</div><div class="t-where">vy.no — BOOKED</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Norled ferry — Bergen → Aurland kai (08:00 dep, arr 13:12, Aug 31)</div><div class="t-why">Scenic transit day. Arrives Aurland 13:12.</div><div class="t-where">norled.no — BOOKED</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Scandic Voss (Sep 3, 1 night)</div><div class="t-why">NOK 2,422 (~$231 total). Back door onto Voss station. Breakfast 6:30am.</div><div class="t-where">BOOKED — pay at property</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Moxy Bergen (2 nights, Aug 29–30)</div><div class="t-why">Paid with Bonvoy points — no cash cost. Breakfast free via Titanium status.</div><div class="t-where">BOOKED</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Sea kayaking — Aurlandsfjord (Sep 2, 10:00am, 2 adults)</div><div class="t-why">3-hour guided Njord tour. NOK ~2,470 for 2 adults. All gear provided.</div><div class="t-where">njord.com — BOOKED ✅</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Flåm → Gudvangen shuttle — Sep 2, 15:15 from Flåm bus stop A/B</div><div class="t-why">20 min ride, arrives Gudvangen 15:35.</div><div class="t-where">norwaysbest.com — BOOKED ✅</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Nærøyfjord cruise — Gudvangen → Flåm, Sep 2, 17:30</div><div class="t-why">Arrives Flåm 19:30 in golden-hour light. Silent electric boat, UNESCO fjord.</div><div class="t-where">norwaysbest.com — BOOKED ✅</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Flåm Railway — ONE-WAY up, Sep 1</div><div class="t-why">One-way up, hike down. Sit right side for Kjosfossen.</div><div class="t-where">vy.no — BOOKED ✅ (Flåm → Myrdal, Sep 1, 09:35)</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Ægir Gastropub — Sep 2, 8pm</div><div class="t-why">Booked. Food until 22:00.</div><div class="t-where">Flåm harbor</div></div></div>
-      <div class="todo done" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Eyye's Lokanta — Sep 3, 7pm, Voss</div><div class="t-why">#1-rated in Voss, Turkish shared plates. Cow's milk allergy flagged. Replaced Hangurstoppen.</div><div class="t-where">BOOKED ✅</div></div></div>
-    </div>
-
-    <div class="win-head"><span class="win-badge w-soon">Now — early Aug</span><div><div class="win-title">Book soon &amp; logistics</div><div class="win-sub">We're in the window — lock these in</div></div></div>
-    <div class="todo-card">
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Matthew's paragliding slot — Sep 3, 15:00</div><div class="t-why">Caleb already booked his. Matthew books separately, same time. NOK 3,000, payment on-site.</div><div class="t-where">vosshpk.no/tandem</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Pre-book Aurland Taxi — Sep 1, ~08:45 pickup</div><div class="t-why">The public shuttle doesn't run early enough (first bus 10:33am). Taxi is the ONLY way to reach Flåm for the 09:35 railway. Aurland → Flåm station, ~15 min. Pre-book — small operator, peak season.</div><div class="t-where">Aurland Taxi: +47 57 63 34 00</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Stegastein shuttle — Aug 31, 20:00 from Aurland bus stop F</div><div class="t-why">Arrives Stegastein 20:30 at sunset (~8:30pm). Round trip ~90 min. Pending the keep/cut decision (see Questions tab).</div><div class="t-where">norwaysbest.com</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Hotel Aurlandsfjord dinner reservation — Aug 31, ~18:00</div><div class="t-why">Aug 31 ~18:00. Table for 2. Note cow's milk allergy (goat/sheep fine). Open 17:00–21:00.</div><div class="t-where">Contact hotel directly</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Taste of the Fjord tasting — OPTIONAL, book last-minute if wanted</div><div class="t-why">Now a free self-paced farm visit; book the guided tasting on the day only if you want it. ~1,500 NOK for 2, non-refundable.</div><div class="t-where">The Fjord Farm, Flåm</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Confirm Viking Village hours for Sep 2 (~3pm window)</div><div class="t-why">Verify opening hours align with the ~15:00 Gudvangen arrival after the cruise shuttle.</div></div></div>
-    </div>
-
-    <div class="win-head"><span class="win-badge w-late">Final 1–2 weeks</span><div><div class="win-title">Logistics &amp; day-of prep</div><div class="win-sub">Nothing sells out here</div></div></div>
-    <div class="todo-card">
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Download apps: Skyss, Fløibanen, Vy, AllTrails (offline Vidden map)</div><div class="t-why">Set up &amp; test before flying. Buy Bybanen tickets on the plane.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Decide: Bergen Card vs pay-as-you-go</div><div class="t-why">Leaning pay-as-you-go (~$29 cheaper). Buy same-day if you choose the card.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Note free-cancellation deadlines</div><div class="t-why">Wangen: Aug 28 · Scandic: 6pm day-of · Citybox: 1 day before.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Check weather &amp; pack layers</div><div class="t-why">Bergen weather drives the Vidden hike call. Pack a rain shell regardless.</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Re-confirm dairy-free at booked restaurants</div><div class="t-why">Quick note to Pinocchio &amp; Bryggeloftet ahead of the dates.</div></div></div>
-    </div>
   </div>
 
   <!-- ============ FOOD PANEL ============ -->
@@ -625,18 +582,6 @@
       <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Fløibanen</div><div class="rl-detail">Funicular ticket (pre-book one-way down, Aug 30).</div></div></div>
       <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">Vy</div><div class="rl-detail">Bergen Railway (already booked, use for ticket access).</div></div></div>
       <div class="route-leg"><div class="rl-icon">📱</div><div class="rl-body"><div class="rl-title">AllTrails</div><div class="rl-detail">Save Vidden trail offline before flying.</div></div></div>
-    </div>
-  </div>
-
-  <!-- ============ QUESTIONS PANEL ============ -->
-  <div class="panel" id="questions">
-    <div class="action-intro">
-      <div class="ai-title">Questions for Matthew</div>
-      <div class="ai-sub">Open decisions to talk through together before we book.</div>
-    </div>
-    <div class="todo-card">
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Stegastein — keep it or cut it?</div><div class="t-why">Stunning platform 650m above the fjord, but it only fits Aug 31 evening (shuttle from Aurland), making our ferry-arrival day packed: Skjerdal farm in the afternoon, then Stegastein at sunset. ~$107 for two. We'll already get big fjord views from Skjerdal, the ferry, the railway, and the kayak. Worth it, or cut to keep arrival day relaxed?</div></div></div>
-      <div class="todo" onclick="toggleTodo(this)"><div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div><div><div class="t-name">Book your own paragliding slot</div><div class="t-why">Caleb's spot is booked for Sep 3 at 15:00. Book yours at vosshpk.no/tandem for the same time. NOK 3,000, payment on-site.</div></div></div>
     </div>
   </div>
 
