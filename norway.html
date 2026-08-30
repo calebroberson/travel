@@ -37,59 +37,8 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ========== PASSWORD GATE ========== */
-  #gate {
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 120%, rgba(143,199,212,0.25), transparent 60%),
-      linear-gradient(180deg, #0B2230 0%, #14455B 55%, #1F4536 100%);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000; flex-direction: column; gap: 24px; padding: 2rem;
-    overflow: hidden;
-  }
-  /* layered mountain silhouettes on the gate */
-  #gate .mtn {
-    position: absolute; left: 0; right: 0; bottom: 0; width: 100%;
-    pointer-events: none;
-  }
-  #gate .mtn.back { opacity: 0.4; bottom: 0; }
-  #gate .mtn.front { opacity: 0.7; bottom: 0; }
-  #gate-inner {
-    position: relative; z-index: 2;
-    display: flex; flex-direction: column; align-items: center; gap: 22px;
-    width: 100%; max-width: 340px;
-  }
-  #gate .kicker {
-    font-family: 'Spline Sans', sans-serif;
-    color: var(--glacier); font-size: 0.72rem; letter-spacing: 4px;
-    text-transform: uppercase; font-weight: 600;
-  }
-  #gate h1 {
-    font-family: 'Fraunces', serif; color: #fff; font-size: 2.3rem;
-    text-align: center; line-height: 1.1; font-weight: 600;
-  }
-  #gate h1 em { font-style: italic; color: var(--glacier); }
-  #gate p { color: rgba(255,255,255,0.65); font-size: 0.85rem; text-align: center; }
-  #gate input {
-    padding: 0.85rem 1.25rem; border-radius: 10px; border: 1.5px solid rgba(143,199,212,0.4);
-    background: rgba(255,255,255,0.08); color: #fff;
-    font-size: 1rem; width: 100%; text-align: center; letter-spacing: 3px;
-    outline: none; font-family: 'Spline Sans', sans-serif;
-  }
-  #gate input::placeholder { color: rgba(255,255,255,0.4); letter-spacing: 2px; }
-  #gate input:focus { border-color: var(--glacier); background: rgba(255,255,255,0.12); }
-  #gate button {
-    background: var(--rust); color: #fff; border: none; padding: 0.85rem 2rem;
-    border-radius: 10px; font-size: 0.95rem; font-family: 'Spline Sans', sans-serif;
-    letter-spacing: 1px; font-weight: 600; cursor: pointer; width: 100%;
-    transition: background 0.2s, transform 0.1s;
-  }
-  #gate button:hover { background: var(--rust-soft); }
-  #gate button:active { transform: translateY(1px); }
-  #gate-error { color: #F0A38A; font-size: 0.82rem; display: none; }
-
   /* ========== MAIN ========== */
-  #main { display: none; }
+  #main { display: block; }
 
   /* HERO */
   .hero {
@@ -263,26 +212,6 @@
 </head>
 <body>
 
-<!-- ===== PASSWORD GATE ===== -->
-<div id="gate">
-  <svg class="mtn back" viewBox="0 0 400 120" preserveAspectRatio="none" height="120">
-    <path d="M0,120 L0,70 L60,30 L110,65 L160,20 L220,60 L280,25 L340,55 L400,35 L400,120 Z" fill="#0B2230"/>
-  </svg>
-  <svg class="mtn front" viewBox="0 0 400 90" preserveAspectRatio="none" height="90">
-    <path d="M0,90 L0,55 L50,25 L95,55 L150,15 L200,50 L255,30 L310,58 L360,28 L400,52 L400,90 Z" fill="#081A24"/>
-    <path d="M150,15 L135,30 L165,30 Z" fill="#D6EAEF" opacity="0.85"/>
-    <path d="M50,25 L40,38 L60,38 Z" fill="#D6EAEF" opacity="0.7"/>
-  </svg>
-  <div id="gate-inner">
-    <div class="kicker">End of Summer · 2026</div>
-    <h1>Norge<br><em>awaits</em></h1>
-    <p>Enter the password to view the itinerary</p>
-    <input type="password" id="pw-input" placeholder="password" autocomplete="off" onkeydown="if(event.key==='Enter')checkPw()">
-    <button onclick="checkPw()">Unlock the trip →</button>
-    <div id="gate-error">Not quite — try again</div>
-  </div>
-</div>
-
 <!-- ===== MAIN ===== -->
 <div id="main">
 
@@ -331,7 +260,8 @@
         <div class="ev"><div class="ev-time">~9:00a</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Ulriksbussen shuttle → Ulriken643 cable car</div><div class="ev-detail">643m. 255 NOK/person one-way up. Buy at station.</div><div class="tags"><span class="tg tg-photo">Photo</span></div></div></div>
         <div class="ev"><div class="ev-time">~9:45a</div><div class="ev-dot dot-green"></div><div class="ev-body"><div class="ev-name">Vidden trail — Ulriken to Fløyen</div><div class="ev-detail">13km, ~5hrs. Red T markers. Rain layer. AllTrails offline.</div><div class="tags"><span class="tg tg-active">Active</span><span class="tg tg-photo">Photo</span></div></div></div>
         <div class="ev"><div class="ev-time">~12:30p</div><div class="ev-dot dot-gold"></div><div class="ev-body"><div class="ev-name">Brushytten waffle hut</div><div class="ev-detail">~15 min before Fløyen. Open Sundays.</div><div class="tags"><span class="tg tg-food">Food</span></div></div></div>
-        <div class="ev"><div class="ev-time">~3:00p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Fløibanen funicular down</div><div class="ev-detail">One-way, 105 NOK/person. Pre-book on app. Back at Moxy ~4pm.</div></div></div>
+        <div class="ev"><div class="ev-time">~3:00p</div><div class="ev-dot dot-blue"></div><div class="ev-body"><div class="ev-name">Fløibanen funicular down</div><div class="ev-detail">One-way, 105 NOK/person. Pre-book on app.</div></div></div>
+        <div class="ev"><div class="ev-time">4:00p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">City Sauna — floating sauna boat</div><div class="ev-detail">Wood-fired sauna moored in the harbour. Cycle out into the fjord every 10–15 minutes, then back in to warm up. Bring a swimsuit and a towel.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-active">Active</span></div></div></div>
         <div class="ev-div"></div>
         <div class="ev"><div class="ev-time">7:00p</div><div class="ev-dot dot-rust"></div><div class="ev-body"><div class="ev-name">Dinner — Bryggeloftet &amp; Stuene</div><div class="ev-detail">Traditional Norwegian, Bergen fish soup. Budget 1hr 45min.</div><div class="tags"><span class="tg tg-book">Booked</span><span class="tg tg-food">Food</span></div></div></div>
         <div class="ev"><div class="ev-time">8:45p</div><div class="ev-dot dot-gray"></div><div class="ev-body"><div class="ev-name">Walk to Magic Ice Bar — 14 min</div></div></div>
@@ -641,25 +571,6 @@
 </div>
 
 <script>
-  function checkPw() {
-    var val = document.getElementById('pw-input').value.trim().toLowerCase();
-    if (val === 'norway') {
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-      try { sessionStorage.setItem('norway_auth', '1'); } catch(e) {}
-    } else {
-      document.getElementById('gate-error').style.display = 'block';
-      document.getElementById('pw-input').value = '';
-      document.getElementById('pw-input').focus();
-    }
-  }
-  try {
-    if (sessionStorage.getItem('norway_auth') === '1') {
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-    }
-  } catch(e) {}
-
   function showTab(id, btn) {
     var panels = document.querySelectorAll('.panel');
     for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
