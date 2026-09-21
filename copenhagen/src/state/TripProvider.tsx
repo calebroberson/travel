@@ -108,6 +108,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
 
   const [order, setOrder] = useState<string[]>([])
 
+  const sessionRef = useRef<Session | null>(null)
+  const hydratingRef = useRef(false)
+  const lastHydratedRef = useRef(0)
+
   const userId = session?.user.id ?? null
   const memberIds = useMemo(() => members.map((m) => m.user_id), [members])
 
@@ -116,6 +120,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
   useEffect(() => {
     const apply = (s: Session | null) => {
+      sessionRef.current = s
       setSession(s)
       setSessionReady(true)
       // Load-bearing: postgres_changes on RLS-protected tables deliver
@@ -131,7 +136,100 @@ export function TripProvider({ children }: { children: ReactNode }) {
 
   // ---------------------------------------------------------------
   // Hydration
+  //
+  // Rebuilds both maps wholesale from the view, so it is idempotent and
+  // safe to call at any time. That is what makes recovery possible: see
+  // the resume effect below.
+  //
+  // `silent` is for background refetches — it keeps the current board on
+  // screen and leaves the sort order frozen, rather than flashing the
+  // loading state and reordering under the user's thumb.
   // ---------------------------------------------------------------
+  const hydrate = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      const silent = opts?.silent === true
+      if (!sessionRef.current) return
+
+      // Never overlap, and do not hammer the API when a phone flips between
+      // apps repeatedly.
+      if (hydratingRef.current) return
+      if (silent && Date.now() - lastHydratedRef.current < 3000) return
+      hydratingRef.current = true
+
+      try {
+        if (!silent) {
+          setStatus('loading')
+          setError(null)
+        }
+
+        // Exactly one trip row is visible under the trip_read policy, so this
+        // both resolves the trip id and doubles as the membership check: zero
+        // rows means no trip_member row exists for this user yet.
+        const { data: trips, error: tripErr } = await supabase.from('trip').select('*').limit(1)
+        if (tripErr) {
+          // A failed background refetch must not blow away a working board.
+          if (!silent) {
+            setError(tripErr.message)
+            setStatus('error')
+          }
+          return
+        }
+        if (!trips || trips.length === 0) {
+          setStatus('not-member')
+          return
+        }
+        const t = trips[0] as Trip
+
+        const [memberRes, placeRes] = await Promise.all([
+          supabase.from('trip_member').select('*').eq('trip_id', t.id),
+          supabase.from('place_with_votes').select('*').eq('trip_id', t.id),
+        ])
+
+        if (memberRes.error || placeRes.error) {
+          if (!silent) {
+            setError((memberRes.error ?? placeRes.error)!.message)
+            setStatus('error')
+          }
+          return
+        }
+
+        const nextMembers = (memberRes.data ?? []) as TripMember[]
+        const nextPlaces = new Map<string, Place>()
+        const nextVotes: VoteMap = new Map()
+        for (const row of (placeRes.data ?? []) as PlaceWithVotes[]) {
+          const { place, votes: entries } = splitRow(row)
+          nextPlaces.set(place.id, place)
+          for (const [k, v] of entries) nextVotes.set(k, v)
+        }
+
+        setTrip(t)
+        setMembers(nextMembers)
+        setPlaces(() => nextPlaces)
+        setVotes(() => nextVotes)
+
+        // Only seed the order on a foreground load. A silent refetch leaves
+        // the frozen order alone; the reconciliation effect files anything
+        // new at the top and `stale` lights up if scores moved.
+        if (!silent) {
+          setOrder(
+            computeOrder(
+              nextPlaces,
+              nextVotes,
+              nextMembers.map((m) => m.user_id),
+            ),
+          )
+        }
+
+        setStatus('ready')
+        lastHydratedRef.current = Date.now()
+      } finally {
+        hydratingRef.current = false
+      }
+    },
+    [setPlaces, setVotes],
+  )
+
+  // Initial load, and whenever the signed-in user changes.
   useEffect(() => {
     if (!sessionReady) return
 
@@ -145,69 +243,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    let cancelled = false
-
-    void (async () => {
-      setStatus('loading')
-      setError(null)
-
-      // Exactly one trip row is visible under the trip_read policy, so this
-      // both resolves the trip id and doubles as the membership check: zero
-      // rows means no trip_member row exists for this user yet.
-      const { data: trips, error: tripErr } = await supabase.from('trip').select('*').limit(1)
-      if (cancelled) return
-      if (tripErr) {
-        setError(tripErr.message)
-        setStatus('error')
-        return
-      }
-      if (!trips || trips.length === 0) {
-        setStatus('not-member')
-        return
-      }
-      const t = trips[0] as Trip
-
-      const [memberRes, placeRes] = await Promise.all([
-        supabase.from('trip_member').select('*').eq('trip_id', t.id),
-        supabase.from('place_with_votes').select('*').eq('trip_id', t.id),
-      ])
-      if (cancelled) return
-
-      if (memberRes.error || placeRes.error) {
-        setError((memberRes.error ?? placeRes.error)!.message)
-        setStatus('error')
-        return
-      }
-
-      const nextMembers = (memberRes.data ?? []) as TripMember[]
-      const nextPlaces = new Map<string, Place>()
-      const nextVotes: VoteMap = new Map()
-      for (const row of (placeRes.data ?? []) as PlaceWithVotes[]) {
-        const { place, votes: entries } = splitRow(row)
-        nextPlaces.set(place.id, place)
-        for (const [k, v] of entries) nextVotes.set(k, v)
-      }
-
-      setTrip(t)
-      setMembers(nextMembers)
-      setPlaces(() => nextPlaces)
-      setVotes(() => nextVotes)
-      setOrder(
-        computeOrder(
-          nextPlaces,
-          nextVotes,
-          nextMembers.map((m) => m.user_id),
-        ),
-      )
-      setStatus('ready')
-    })()
-
-    return () => {
-      cancelled = true
-    }
+    void hydrate()
     // Keyed on the user id, not the session object: a token refresh swaps the
     // object roughly hourly and would otherwise refetch the whole board.
-  }, [sessionReady, session?.user.id, setPlaces, setVotes])
+  }, [sessionReady, session?.user.id, hydrate, setPlaces, setVotes])
 
   // ---------------------------------------------------------------
   // Realtime. Fires on the base tables, never on the view — which is
@@ -215,6 +254,8 @@ export function TripProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
   useEffect(() => {
     if (!trip) return
+
+    let hasSubscribed = false
 
     const channel = supabase
       .channel(`board:${trip.id}`)
@@ -261,12 +302,45 @@ export function TripProvider({ children }: { children: ReactNode }) {
           setVotes((m) => new Map(m).set(voteKey(v.place_id, v.user_id), v.value))
         },
       )
-      .subscribe()
+      .subscribe((channelStatus) => {
+        if (channelStatus !== 'SUBSCRIBED') return
+        // The first SUBSCRIBED is the initial join, already covered by
+        // hydration. Every later one is a re-join after the socket dropped,
+        // and the events missed while it was down are simply gone — a
+        // refetch is the only way to get them back.
+        if (hasSubscribed) void hydrate({ silent: true })
+        hasSubscribed = true
+      })
 
     return () => {
       void supabase.removeChannel(channel)
     }
-  }, [trip, setPlaces, setVotes])
+  }, [trip, hydrate, setPlaces, setVotes])
+
+  // ---------------------------------------------------------------
+  // Resume. A phone that sleeps, loses signal, or sits backgrounded drops
+  // the websocket, and anything that happened meanwhile never arrives —
+  // the board then shows stale data with no indication anything is wrong.
+  // This is the failure mode that matters on a trip: two people on foreign
+  // mobile data, pocketing their phones between taps.
+  // ---------------------------------------------------------------
+  useEffect(() => {
+    if (!trip) return
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void hydrate({ silent: true })
+    }
+    const onOnline = () => void hydrate({ silent: true })
+
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('online', onOnline)
+    window.addEventListener('focus', onVisible)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('focus', onVisible)
+    }
+  }, [trip, hydrate])
 
   // ---------------------------------------------------------------
   // Order. One reconciliation covers local adds, realtime adds and
