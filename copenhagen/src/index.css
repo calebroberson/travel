@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* Dark by default and only. No toggle, so no dark: variants anywhere. */
+@theme {
+  --color-bg: #0b0f14;
+  --color-surface: #141b23;
+  --color-raised: #1d2733;
+  --color-line: #2b3846;
+  --color-ink: #eef4fb;
+  --color-muted: #95a6b8;
+  --color-accent: #58a6ff;
+  --color-danger: #ff6b6b;
+
+  --color-cat-eat: #ff9e64;
+  --color-cat-drink: #c39cff;
+  --color-cat-see: #58a6ff;
+  --color-cat-do: #5ddfa4;
+  --color-cat-shop: #ffd166;
+}
+
+html {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Horizontal chip rows: scrollable, but without a visible scrollbar. */
+.no-bar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Every tap target on the board clears 44px; kill the iOS tap flash. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The one animation in the app. */
+@keyframes sheet {
+  from {
+    transform: translateY(6%);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
