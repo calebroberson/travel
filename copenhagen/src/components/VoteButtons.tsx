@@ -1,10 +1,10 @@
 import type { VoteValue } from '../lib/types'
 
 const OPTIONS: { value: VoteValue; label: string }[] = [
-  { value: -1, label: 'no' },
-  { value: 0, label: 'meh' },
-  { value: 1, label: 'want' },
-  { value: 2, label: 'must' },
+  { value: -1, label: 'No' },
+  { value: 0, label: 'Meh' },
+  { value: 1, label: 'Want' },
+  { value: 2, label: 'Must' },
 ]
 
 const FILL: Record<VoteValue, string> = {

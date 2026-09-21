@@ -102,7 +102,13 @@ export default function Board() {
   return (
     <div className="mx-auto min-h-[100dvh] w-full max-w-2xl">
       <div className="sticky top-0 z-30 bg-bg">
-        <AddBar onAdd={addPlace} />
+        <AddBar
+          // New places inherit the active filters, so what you add stays
+          // where you added it instead of being filtered straight back out.
+          onAdd={(raw) =>
+            addPlace(raw, { category: category ?? undefined, neighborhood })
+          }
+        />
         <FilterChips
           neighborhoods={neighborhoods}
           category={category}

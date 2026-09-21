@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { CATEGORIES, STATUSES } from '../lib/types'
+import { titleCase } from '../lib/labels'
 import type { Place, PlaceCategory, PlacePatch, PlaceStatus } from '../lib/types'
 
 type Props = {
@@ -98,7 +99,7 @@ export default function EditSheet({ place, neighborhoods, onSave, onDelete, onCl
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {titleCase(c)}
                 </option>
               ))}
             </select>
@@ -146,7 +147,7 @@ export default function EditSheet({ place, neighborhoods, onSave, onDelete, onCl
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {titleCase(s)}
                 </option>
               ))}
             </select>

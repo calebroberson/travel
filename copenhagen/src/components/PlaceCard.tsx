@@ -1,4 +1,5 @@
 import { bookingDue, shortDate } from '../lib/dates'
+import { titleCase } from '../lib/labels'
 import { tally } from '../lib/tally'
 import type { VoteMap } from '../lib/tally'
 import type { Place, PlaceCategory, TripMember, VoteValue } from '../lib/types'
@@ -62,7 +63,7 @@ export default function PlaceCard({
           <div className="min-w-0 flex-1">
             <h2 className="break-words text-lg font-medium leading-snug">{place.name}</h2>
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
-              <span className={CATEGORY_CLASS[place.category]}>{place.category}</span>
+              <span className={CATEGORY_CLASS[place.category]}>{titleCase(place.category)}</span>
               {place.neighborhood && (
                 <>
                   <span aria-hidden>·</span>
@@ -72,7 +73,7 @@ export default function PlaceCard({
               {place.status !== 'idea' && (
                 <>
                   <span aria-hidden>·</span>
-                  <span>{place.status}</span>
+                  <span>{titleCase(place.status)}</span>
                 </>
               )}
             </p>
@@ -121,7 +122,7 @@ export default function PlaceCard({
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {due && (
               <span className="rounded-full bg-danger/15 px-2.5 py-1 text-xs font-medium text-danger">
-                book by {place.book_by ? shortDate(place.book_by) : 'soon'}
+                Book by {place.book_by ? shortDate(place.book_by) : 'soon'}
               </span>
             )}
             {t.score !== 0 && (

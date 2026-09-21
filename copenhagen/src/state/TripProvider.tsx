@@ -6,9 +6,28 @@ import { supabase } from '../lib/supabase'
 import { computeOrder, voteKey } from '../lib/tally'
 import type { VoteMap } from '../lib/tally'
 import { parseInput } from '../lib/parseInput'
-import type { Place, PlacePatch, PlaceWithVotes, Trip, TripMember, VoteValue } from '../lib/types'
+import type {
+  Place,
+  PlaceCategory,
+  PlacePatch,
+  PlaceWithVotes,
+  Trip,
+  TripMember,
+  VoteValue,
+} from '../lib/types'
 
 type Status = 'loading' | 'signed-out' | 'not-member' | 'ready' | 'error'
+
+/**
+ * Seed values for a new place, taken from whatever filters are active.
+ * Without these a place added under the "Eat" filter would be created as
+ * 'see' and then immediately filtered back out of the list the moment it
+ * appeared, which reads as the add having silently failed.
+ */
+export type PlaceDefaults = {
+  category?: PlaceCategory
+  neighborhood?: string | null
+}
 
 type TripContextValue = {
   status: Status
@@ -29,7 +48,7 @@ type TripContextValue = {
   stale: boolean
   resort: () => void
 
-  addPlace: (raw: string) => Promise<boolean>
+  addPlace: (raw: string, defaults?: PlaceDefaults) => Promise<boolean>
   castVote: (placeId: string, value: VoteValue) => Promise<void>
   updatePlace: (id: string, patch: PlacePatch) => Promise<boolean>
   deletePlace: (id: string) => Promise<boolean>
@@ -307,10 +326,15 @@ export function TripProvider({ children }: { children: ReactNode }) {
   )
 
   const addPlace = useCallback(
-    async (raw: string) => {
+    async (raw: string, defaults?: PlaceDefaults) => {
       if (!trip || !userId) return false
       const parsed = parseInput(raw)
       if (!parsed) return false
+
+      // Inherit whatever the board is filtered to, so the new card stays
+      // visible where it was added. 'see' is the schema default.
+      const category = defaults?.category ?? 'see'
+      const neighborhood = defaults?.neighborhood ?? null
 
       // Client-generated id: the card can appear before the insert lands,
       // and the realtime echo then overwrites the same key rather than
@@ -320,8 +344,8 @@ export function TripProvider({ children }: { children: ReactNode }) {
         id,
         trip_id: trip.id,
         name: parsed.name,
-        category: 'see',
-        neighborhood: null,
+        category,
+        neighborhood,
         lat: null,
         lng: null,
         address: null,
@@ -346,6 +370,8 @@ export function TripProvider({ children }: { children: ReactNode }) {
         id,
         trip_id: trip.id,
         name: parsed.name,
+        category,
+        neighborhood,
         url: parsed.url,
         status: 'idea',
         added_by: userId,
