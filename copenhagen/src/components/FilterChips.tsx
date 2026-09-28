@@ -61,7 +61,7 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={
-        'min-h-[38px] shrink-0 whitespace-nowrap rounded-full border px-4 text-sm capitalize transition-colors ' +
+        'min-h-[44px] shrink-0 whitespace-nowrap rounded-full border px-4 text-sm capitalize transition-colors ' +
         (active
           ? 'border-accent bg-accent text-bg font-medium'
           : 'border-line bg-surface text-muted active:bg-raised')
