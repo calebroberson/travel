@@ -1,38 +1,36 @@
 import { useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { useTrip } from '../state/TripProvider'
+import { useFrozenOrder } from '../state/useFrozenOrder'
+import { scheduleByPlace } from '../lib/schedule'
 import type { PlaceCategory, VoteValue } from '../lib/types'
 import { CATEGORIES } from '../lib/types'
 import AddBar from './AddBar'
 import FilterChips from './FilterChips'
 import PlaceCard from './PlaceCard'
 import EditSheet from './EditSheet'
-import Gate from './Gate'
 
 export default function Board() {
   const {
-    status,
-    error,
-    notice,
-    dismissNotice,
     userId,
     members,
+    memberIds,
     places,
     votes,
-    order,
-    stale,
-    resort,
+    days,
+    items,
     addPlace,
     castVote,
     updatePlace,
     deletePlace,
-    signOut,
+    addEvent,
   } = useTrip()
 
+  const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const [editingId, setEditingId] = useState<string | null>(null)
+  const { order, stale, resort } = useFrozenOrder(places, votes, memberIds)
 
   // Filters live in the query string so a filtered view is linkable.
   const rawCategory = params.get('cat')
@@ -46,6 +44,8 @@ export default function Board() {
     for (const p of places.values()) if (p.neighborhood) set.add(p.neighborhood)
     return [...set].sort((a, b) => a.localeCompare(b))
   }, [places])
+
+  const schedule = useMemo(() => scheduleByPlace(items, days), [items, days])
 
   const visible = useMemo(() => {
     return order
@@ -72,31 +72,6 @@ export default function Board() {
     setParams(p, { replace: true })
   }
 
-  if (status === 'loading') return <Centered>Loading…</Centered>
-  if (status === 'signed-out') return <Gate />
-  if (status === 'not-member') {
-    return (
-      <Centered>
-        <p className="text-lg">You are not on this trip yet.</p>
-        <button
-          type="button"
-          onClick={signOut}
-          className="mt-6 min-h-[44px] rounded-xl border border-line px-5 text-muted active:bg-raised"
-        >
-          Sign out
-        </button>
-      </Centered>
-    )
-  }
-  if (status === 'error') {
-    return (
-      <Centered>
-        <p className="text-lg text-danger">Could not load the board.</p>
-        <p className="mt-2 text-sm text-muted">{error}</p>
-      </Centered>
-    )
-  }
-
   const editing = editingId ? (places.get(editingId) ?? null) : null
 
   return (
@@ -105,9 +80,7 @@ export default function Board() {
         <AddBar
           // New places inherit the active filters, so what you add stays
           // where you added it instead of being filtered straight back out.
-          onAdd={(raw) =>
-            addPlace(raw, { category: category ?? undefined, neighborhood })
-          }
+          onAdd={(raw) => addPlace(raw, { category: category ?? undefined, neighborhood })}
         />
         <FilterChips
           neighborhoods={neighborhoods}
@@ -129,7 +102,7 @@ export default function Board() {
         </div>
       )}
 
-      <ul className="space-y-3 px-4 pb-24 pt-3">
+      <ul className="space-y-3 px-4 pb-6 pt-3">
         {visible.map((p) => (
           <PlaceCard
             key={p.id}
@@ -137,6 +110,7 @@ export default function Board() {
             votes={votes}
             members={members}
             userId={userId}
+            scheduledOn={schedule.get(p.id) ?? []}
             onVote={(v: VoteValue) => void castVote(p.id, v)}
             onOpen={() => setEditingId(p.id)}
           />
@@ -144,7 +118,7 @@ export default function Board() {
       </ul>
 
       {visible.length === 0 && (
-        <p className="px-4 pb-24 text-center text-muted">
+        <p className="px-4 pb-6 text-center text-muted">
           {places.size === 0
             ? 'Nothing here yet. Paste a link up top.'
             : 'Nothing matches those filters.'}
@@ -155,29 +129,15 @@ export default function Board() {
         <EditSheet
           place={editing}
           neighborhoods={neighborhoods}
+          days={days}
+          scheduledOn={schedule.get(editing.id) ?? []}
           onSave={(patch) => updatePlace(editing.id, patch)}
           onDelete={() => deletePlace(editing.id)}
+          onSchedule={(dayId) => void addEvent(dayId, { placeId: editing.id })}
+          onOpenDay={(date) => navigate(`/days/${date}`)}
           onClose={() => setEditingId(null)}
         />
       )}
-
-      {notice && (
-        <button
-          type="button"
-          onClick={dismissNotice}
-          className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-40 rounded-xl border border-danger/40 bg-danger/15 px-4 py-3 text-left text-sm text-danger"
-        >
-          {notice}
-        </button>
-      )}
     </div>
-  )
-}
-
-function Centered({ children }: { children: ReactNode }) {
-  return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col items-center justify-center px-6 text-center">
-      {children}
-    </main>
   )
 }

@@ -1,8 +1,9 @@
 import { bookingDue, shortDate } from '../lib/dates'
 import { titleCase } from '../lib/labels'
+import { shortDay } from '../lib/days'
 import { tally } from '../lib/tally'
 import type { VoteMap } from '../lib/tally'
-import type { Place, PlaceCategory, TripMember, VoteValue } from '../lib/types'
+import type { Place, PlaceCategory, TripDay, TripMember, VoteValue } from '../lib/types'
 import VoteButtons from './VoteButtons'
 
 const CATEGORY_CLASS: Record<PlaceCategory, string> = {
@@ -26,6 +27,7 @@ export default function PlaceCard({
   votes,
   members,
   userId,
+  scheduledOn,
   onVote,
   onOpen,
 }: {
@@ -33,6 +35,8 @@ export default function PlaceCard({
   votes: VoteMap
   members: TripMember[]
   userId: string | null
+  /** Days this place is on the itinerary. */
+  scheduledOn: TripDay[]
   onVote: (value: VoteValue) => void
   onOpen: () => void
 }) {
@@ -42,7 +46,8 @@ export default function PlaceCard({
     members.map((m) => m.user_id),
   )
   const mine = userId ? (t.byUser[userId] as VoteValue | undefined) : undefined
-  const due = bookingDue(place.needs_reservation, place.book_by)
+  const due = bookingDue(place.needs_reservation && !place.booked, place.book_by)
+  const booked = place.needs_reservation && place.booked
 
   return (
     <li className="rounded-2xl border border-line bg-surface">
@@ -70,11 +75,18 @@ export default function PlaceCard({
                   <span>{place.neighborhood}</span>
                 </>
               )}
-              {place.status !== 'idea' && (
+              {scheduledOn.length > 0 ? (
                 <>
                   <span aria-hidden>·</span>
-                  <span>{titleCase(place.status)}</span>
+                  <span className="text-ink/80">{scheduledOn.map((d) => shortDay(d.date)).join(', ')}</span>
                 </>
+              ) : (
+                place.status !== 'idea' && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span>{titleCase(place.status)}</span>
+                  </>
+                )
               )}
             </p>
           </div>
@@ -118,11 +130,16 @@ export default function PlaceCard({
           </div>
         </div>
 
-        {(due || t.score !== 0) && (
+        {(due || booked || t.score !== 0) && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {due && (
               <span className="rounded-full bg-danger/15 px-2.5 py-1 text-xs font-medium text-danger">
                 Book by {place.book_by ? shortDate(place.book_by) : 'soon'}
+              </span>
+            )}
+            {booked && (
+              <span className="rounded-full bg-cat-do/15 px-2.5 py-1 text-xs font-medium text-cat-do">
+                Booked{place.booking_ref ? ` · ${place.booking_ref}` : ''}
               </span>
             )}
             {t.score !== 0 && (

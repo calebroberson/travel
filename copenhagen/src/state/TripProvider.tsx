@@ -3,18 +3,21 @@ import type { ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 
 import { supabase } from '../lib/supabase'
-import { computeOrder, voteKey } from '../lib/tally'
+import { voteKey } from '../lib/tally'
 import type { VoteMap } from '../lib/tally'
 import { parseInput } from '../lib/parseInput'
 import type {
+  ItineraryItem,
   Place,
   PlaceCategory,
   PlacePatch,
   PlaceWithVotes,
   Trip,
+  TripDay,
   TripMember,
   VoteValue,
 } from '../lib/types'
+import { useItineraryActions } from './useItineraryActions'
 
 type Status = 'loading' | 'signed-out' | 'not-member' | 'ready' | 'error'
 
@@ -29,7 +32,9 @@ export type PlaceDefaults = {
   neighborhood?: string | null
 }
 
-type TripContextValue = {
+type ItineraryActions = ReturnType<typeof useItineraryActions>
+
+type TripContextValue = ItineraryActions & {
   status: Status
   error: string | null
   notice: string | null
@@ -43,10 +48,9 @@ type TripContextValue = {
   places: Map<string, Place>
   votes: VoteMap
 
-  /** Display order, frozen against vote changes. See `stale` / `resort`. */
-  order: string[]
-  stale: boolean
-  resort: () => void
+  /** Trip days in date order. */
+  days: TripDay[]
+  items: Map<string, ItineraryItem>
 
   addPlace: (raw: string, defaults?: PlaceDefaults) => Promise<boolean>
   castVote: (placeId: string, value: VoteValue) => Promise<void>
@@ -77,6 +81,21 @@ function splitRow(row: PlaceWithVotes): { place: Place; votes: [string, VoteValu
   return { place, votes: entries }
 }
 
+/**
+ * A Map in state, mirrored in a ref so realtime handlers and rollbacks read
+ * current values synchronously — no stale closures, no impure updaters.
+ */
+function useMirroredMap<V>() {
+  const [state, setState] = useState<Map<string, V>>(new Map())
+  const ref = useRef(state)
+  const set = useCallback((fn: (m: Map<string, V>) => Map<string, V>) => {
+    const next = fn(ref.current)
+    ref.current = next
+    setState(next)
+  }, [])
+  return [state, set, ref] as const
+}
+
 export function TripProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [sessionReady, setSessionReady] = useState(false)
@@ -87,26 +106,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
   const [trip, setTrip] = useState<Trip | null>(null)
   const [members, setMembers] = useState<TripMember[]>([])
 
-  // Mirrored in refs so realtime handlers and rollbacks read current values
-  // synchronously, without stale closures and without impure state updaters.
-  const [places, setPlacesState] = useState<Map<string, Place>>(new Map())
-  const [votes, setVotesState] = useState<VoteMap>(new Map())
-  const placesRef = useRef(places)
-  const votesRef = useRef(votes)
-
-  const setPlaces = useCallback((fn: (m: Map<string, Place>) => Map<string, Place>) => {
-    const next = fn(placesRef.current)
-    placesRef.current = next
-    setPlacesState(next)
-  }, [])
-
-  const setVotes = useCallback((fn: (m: VoteMap) => VoteMap) => {
-    const next = fn(votesRef.current)
-    votesRef.current = next
-    setVotesState(next)
-  }, [])
-
-  const [order, setOrder] = useState<string[]>([])
+  const [places, setPlaces, placesRef] = useMirroredMap<Place>()
+  const [votes, setVotes, votesRef] = useMirroredMap<VoteValue>()
+  const [dayMap, setDays, daysRef] = useMirroredMap<TripDay>()
+  const [items, setItems, itemsRef] = useMirroredMap<ItineraryItem>()
 
   const sessionRef = useRef<Session | null>(null)
   const hydratingRef = useRef(false)
@@ -114,6 +117,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
 
   const userId = session?.user.id ?? null
   const memberIds = useMemo(() => members.map((m) => m.user_id), [members])
+  const days = useMemo(
+    () => [...dayMap.values()].sort((a, b) => a.date.localeCompare(b.date)),
+    [dayMap],
+  )
 
   // ---------------------------------------------------------------
   // Session
@@ -137,23 +144,23 @@ export function TripProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
   // Hydration
   //
-  // Rebuilds both maps wholesale from the view, so it is idempotent and
-  // safe to call at any time. That is what makes recovery possible: see
-  // the resume effect below.
+  // Rebuilds every map wholesale from the server, so it is idempotent and
+  // safe to call at any time. That is what makes recovery possible, both
+  // for resume (below) and for multi-row itinerary writes that fail partway.
   //
-  // `silent` is for background refetches — it keeps the current board on
-  // screen and leaves the sort order frozen, rather than flashing the
-  // loading state and reordering under the user's thumb.
+  // `silent` keeps the current screen up instead of flashing the loading
+  // state, and won't replace a working board with an error. `force` skips
+  // the throttle, for recovery refetches that must actually happen.
   // ---------------------------------------------------------------
   const hydrate = useCallback(
-    async (opts?: { silent?: boolean }) => {
+    async (opts?: { silent?: boolean; force?: boolean }) => {
       const silent = opts?.silent === true
       if (!sessionRef.current) return
 
       // Never overlap, and do not hammer the API when a phone flips between
       // apps repeatedly.
       if (hydratingRef.current) return
-      if (silent && Date.now() - lastHydratedRef.current < 3000) return
+      if (silent && !opts?.force && Date.now() - lastHydratedRef.current < 3000) return
       hydratingRef.current = true
 
       try {
@@ -167,7 +174,6 @@ export function TripProvider({ children }: { children: ReactNode }) {
         // rows means no trip_member row exists for this user yet.
         const { data: trips, error: tripErr } = await supabase.from('trip').select('*').limit(1)
         if (tripErr) {
-          // A failed background refetch must not blow away a working board.
           if (!silent) {
             setError(tripErr.message)
             setStatus('error')
@@ -180,20 +186,23 @@ export function TripProvider({ children }: { children: ReactNode }) {
         }
         const t = trips[0] as Trip
 
-        const [memberRes, placeRes] = await Promise.all([
+        const [memberRes, placeRes, dayRes] = await Promise.all([
           supabase.from('trip_member').select('*').eq('trip_id', t.id),
           supabase.from('place_with_votes').select('*').eq('trip_id', t.id),
+          // Items embedded under their day: one round trip, scoped to this
+          // trip, and no new view to keep in sync with the tables.
+          supabase.from('trip_day').select('*, itinerary_item(*)').eq('trip_id', t.id),
         ])
 
-        if (memberRes.error || placeRes.error) {
+        const failed = memberRes.error ?? placeRes.error ?? dayRes.error
+        if (failed) {
           if (!silent) {
-            setError((memberRes.error ?? placeRes.error)!.message)
+            setError(failed.message)
             setStatus('error')
           }
           return
         }
 
-        const nextMembers = (memberRes.data ?? []) as TripMember[]
         const nextPlaces = new Map<string, Place>()
         const nextVotes: VoteMap = new Map()
         for (const row of (placeRes.data ?? []) as PlaceWithVotes[]) {
@@ -202,32 +211,31 @@ export function TripProvider({ children }: { children: ReactNode }) {
           for (const [k, v] of entries) nextVotes.set(k, v)
         }
 
-        setTrip(t)
-        setMembers(nextMembers)
-        setPlaces(() => nextPlaces)
-        setVotes(() => nextVotes)
-
-        // Only seed the order on a foreground load. A silent refetch leaves
-        // the frozen order alone; the reconciliation effect files anything
-        // new at the top and `stale` lights up if scores moved.
-        if (!silent) {
-          setOrder(
-            computeOrder(
-              nextPlaces,
-              nextVotes,
-              nextMembers.map((m) => m.user_id),
-            ),
-          )
+        const nextDays = new Map<string, TripDay>()
+        const nextItems = new Map<string, ItineraryItem>()
+        type DayRow = TripDay & { itinerary_item: ItineraryItem[] | null }
+        for (const row of (dayRes.data ?? []) as DayRow[]) {
+          const { itinerary_item, ...day } = row
+          nextDays.set(day.id, day)
+          for (const item of itinerary_item ?? []) nextItems.set(item.id, item)
         }
 
+        setTrip(t)
+        setMembers((memberRes.data ?? []) as TripMember[])
+        setPlaces(() => nextPlaces)
+        setVotes(() => nextVotes)
+        setDays(() => nextDays)
+        setItems(() => nextItems)
         setStatus('ready')
         lastHydratedRef.current = Date.now()
       } finally {
         hydratingRef.current = false
       }
     },
-    [setPlaces, setVotes],
+    [setPlaces, setVotes, setDays, setItems],
   )
+
+  const resync = useCallback(() => void hydrate({ silent: true, force: true }), [hydrate])
 
   // Initial load, and whenever the signed-in user changes.
   useEffect(() => {
@@ -239,47 +247,60 @@ export function TripProvider({ children }: { children: ReactNode }) {
       setMembers([])
       setPlaces(() => new Map())
       setVotes(() => new Map())
-      setOrder([])
+      setDays(() => new Map())
+      setItems(() => new Map())
       return
     }
 
     void hydrate()
     // Keyed on the user id, not the session object: a token refresh swaps the
-    // object roughly hourly and would otherwise refetch the whole board.
-  }, [sessionReady, session?.user.id, hydrate, setPlaces, setVotes])
+    // object roughly hourly and would otherwise refetch everything.
+  }, [sessionReady, session?.user.id, hydrate, setPlaces, setVotes, setDays, setItems])
 
   // ---------------------------------------------------------------
   // Realtime. Fires on the base tables, never on the view — which is
-  // exactly why derived columns are not held in state.
+  // exactly why derived columns are not held in state. Every handler is a
+  // plain set-or-delete on one map, so a local optimistic write and its
+  // server echo are the same operation and the echo is harmless.
   // ---------------------------------------------------------------
   useEffect(() => {
     if (!trip) return
 
     let hasSubscribed = false
 
+    const upsertOrDelete =
+      <V extends { id: string }>(set: (fn: (m: Map<string, V>) => Map<string, V>) => void) =>
+      (payload: { eventType: string; new: unknown; old: unknown }) => {
+        if (payload.eventType === 'DELETE') {
+          const id = (payload.old as { id?: string }).id
+          if (!id) return
+          set((m) => {
+            const n = new Map(m)
+            n.delete(id)
+            return n
+          })
+          return
+        }
+        const row = payload.new as V
+        set((m) => new Map(m).set(row.id, row))
+      }
+
     const channel = supabase
-      .channel(`board:${trip.id}`)
+      .channel(`trip:${trip.id}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'place', filter: `trip_id=eq.${trip.id}` },
         (payload) => {
+          upsertOrDelete<Place>(setPlaces)(payload)
           if (payload.eventType === 'DELETE') {
             const id = (payload.old as { id?: string }).id
             if (!id) return
-            setPlaces((m) => {
-              const n = new Map(m)
-              n.delete(id)
-              return n
-            })
             setVotes((m) => {
               const n = new Map(m)
               for (const k of [...n.keys()]) if (k.startsWith(id + '|')) n.delete(k)
               return n
             })
-            return
           }
-          const row = payload.new as Place
-          setPlaces((m) => new Map(m).set(row.id, row))
         },
       )
       .on(
@@ -302,6 +323,17 @@ export function TripProvider({ children }: { children: ReactNode }) {
           setVotes((m) => new Map(m).set(voteKey(v.place_id, v.user_id), v.value))
         },
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'trip_day', filter: `trip_id=eq.${trip.id}` },
+        upsertOrDelete<TripDay>(setDays),
+      )
+      .on(
+        // No trip_id on items either; RLS scopes them through trip_day.
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'itinerary_item' },
+        upsertOrDelete<ItineraryItem>(setItems),
+      )
       .subscribe((channelStatus) => {
         if (channelStatus !== 'SUBSCRIBED') return
         // The first SUBSCRIBED is the initial join, already covered by
@@ -315,7 +347,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
     return () => {
       void supabase.removeChannel(channel)
     }
-  }, [trip, hydrate, setPlaces, setVotes])
+  }, [trip, hydrate, setPlaces, setVotes, setDays, setItems])
 
   // ---------------------------------------------------------------
   // Resume. A phone that sleeps, loses signal, or sits backgrounded drops
@@ -343,28 +375,8 @@ export function TripProvider({ children }: { children: ReactNode }) {
   }, [trip, hydrate])
 
   // ---------------------------------------------------------------
-  // Order. One reconciliation covers local adds, realtime adds and
-  // deletes: anything new goes to the top, anything gone drops out.
-  // Vote changes deliberately do not touch it.
-  // ---------------------------------------------------------------
-  useEffect(() => {
-    setOrder((prev) => {
-      const present = new Set(places.keys())
-      const kept = prev.filter((id) => present.has(id))
-      const known = new Set(kept)
-      const added = [...places.keys()].filter((id) => !known.has(id))
-      if (added.length === 0 && kept.length === prev.length) return prev
-      return [...added, ...kept]
-    })
-  }, [places])
-
-  const sorted = useMemo(() => computeOrder(places, votes, memberIds), [places, votes, memberIds])
-  const stale = useMemo(() => sorted.join() !== order.join(), [sorted, order])
-  const resort = useCallback(() => setOrder(sorted), [sorted])
-
-  // ---------------------------------------------------------------
-  // Mutations. All optimistic, all rolling back on failure, none
-  // blocking the tap on a round trip.
+  // Place and vote mutations. All optimistic, all rolling back on
+  // failure, none blocking the tap on a round trip.
   // ---------------------------------------------------------------
   const castVote = useCallback(
     async (placeId: string, value: VoteValue) => {
@@ -396,7 +408,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
         setNotice('Vote did not save — ' + err.message)
       }
     },
-    [userId, setVotes],
+    [userId, setVotes, votesRef],
   )
 
   const addPlace = useCallback(
@@ -480,7 +492,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
       }
       return true
     },
-    [setPlaces],
+    [setPlaces, placesRef],
   )
 
   const deletePlace = useCallback(
@@ -493,17 +505,40 @@ export function TripProvider({ children }: { children: ReactNode }) {
         n.delete(id)
         return n
       })
+      // Items keep their title snapshot and just lose the link; the server
+      // does the same via ON DELETE SET NULL, and its echo will confirm it.
+      setItems((m) => {
+        let n: Map<string, ItineraryItem> | null = null
+        for (const [itemId, item] of m) {
+          if (item.place_id !== id) continue
+          n ??= new Map(m)
+          n.set(itemId, { ...item, place_id: null })
+        }
+        return n ?? m
+      })
 
       const { error: err } = await supabase.from('place').delete().eq('id', id)
       if (err) {
         setPlaces((m) => new Map(m).set(id, prev))
         setNotice('Could not delete — ' + err.message)
+        resync()
         return false
       }
       return true
     },
-    [setPlaces],
+    [setPlaces, placesRef, setItems, resync],
   )
+
+  const itinerary = useItineraryActions({
+    itemsRef,
+    daysRef,
+    placesRef,
+    setItems,
+    setDays,
+    updatePlace,
+    setNotice,
+    resync,
+  })
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
@@ -512,6 +547,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
   const dismissNotice = useCallback(() => setNotice(null), [])
 
   const value: TripContextValue = {
+    ...itinerary,
     status,
     error,
     notice,
@@ -522,9 +558,8 @@ export function TripProvider({ children }: { children: ReactNode }) {
     memberIds,
     places,
     votes,
-    order,
-    stale,
-    resort,
+    days,
+    items,
     addPlace,
     castVote,
     updatePlace,

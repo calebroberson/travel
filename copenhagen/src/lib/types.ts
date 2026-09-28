@@ -59,18 +59,67 @@ export type PlaceWithVotes = Place & {
   votes: Record<string, number> | null
 }
 
-/** The subset of Place the edit sheet can write. */
+/** The subset of Place the edit sheets can write. */
 export type PlacePatch = Partial<
   Pick<
     Place,
     | 'name'
     | 'category'
     | 'neighborhood'
+    | 'address'
     | 'url'
     | 'note'
     | 'needs_reservation'
     | 'book_by'
+    | 'booked'
+    | 'booking_ref'
     | 'daylight_required'
     | 'status'
   >
+>
+
+// ------------------------------------------------------------------
+// Itinerary
+// ------------------------------------------------------------------
+
+/** 'transit' items are the legs between events; the other three are events. */
+export type ItemKind = 'activity' | 'meal' | 'transit' | 'logistics'
+export const EVENT_KINDS: Exclude<ItemKind, 'transit'>[] = ['activity', 'meal', 'logistics']
+
+export type TripDay = {
+  id: string
+  trip_id: string
+  date: string
+  title: string | null
+  lodging: string | null
+  neighborhood_focus: string | null
+  rain_plan: string | null
+}
+
+export type DayPatch = Partial<
+  Pick<TripDay, 'title' | 'lodging' | 'neighborhood_focus' | 'rain_plan'>
+>
+
+export type ItineraryItem = {
+  id: string
+  day_id: string
+  place_id: string | null
+  /**
+   * Always set, even for place-linked items, where it snapshots the place
+   * name. The schema requires place_id or title, and place_id is ON DELETE
+   * SET NULL — so without the snapshot, deleting a scheduled place would
+   * null the link, violate item_has_subject, and fail the whole delete.
+   */
+  title: string | null
+  kind: ItemKind
+  /** Postgres `time` — arrives as 'HH:MM:SS'. Normalise with hhmm(). */
+  start_time: string | null
+  end_time: string | null
+  note: string | null
+  sort_order: number
+  created_at: string
+}
+
+export type ItemPatch = Partial<
+  Pick<ItineraryItem, 'title' | 'kind' | 'start_time' | 'end_time' | 'note'>
 >

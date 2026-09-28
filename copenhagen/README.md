@@ -1,10 +1,15 @@
 # Copenhagen — idea board
 
-A small two-person app for collecting and ranking places to go in Copenhagen.
+A small two-person app for planning a trip to Copenhagen.
 Vite + React + TypeScript + Tailwind on Supabase, deployed to Vercel as a static SPA.
 
-This is scope one of the trip app: **the idea board only**. Day planning, maps,
-comments, packing and documents are not built yet, though the schema supports them.
+Two tabs:
+
+- **Ideas** — collect places, vote on them, filter, edit.
+- **Days** — turn them into an itinerary: stops in order, how to get between them,
+  daylight, and what still needs booking.
+
+Comments, packing and documents are not built yet, though the schema supports them.
 
 ## Environment
 
@@ -109,7 +114,7 @@ overwrites that key instead of arriving as a duplicate card.
 ### Sort order is frozen on purpose
 
 Cards sort by score descending, then `created_at` descending — but the order is a
-snapshot held in `order`, not recomputed on every vote. With two voters a single tap
+snapshot (`useFrozenOrder`, owned by the board), not recomputed on every vote. With two voters a single tap
 swings a score by up to 3, which is enough to throw a card off screen from under the
 thumb that just tapped it. So votes update the card in place, and a "re-sort" button
 appears when the frozen order no longer matches what the scores say.
@@ -117,3 +122,70 @@ appears when the frozen order no longer matches what the scores say.
 This also settles a conflict in the original spec: a brand-new place has score 0 and
 would not sort to the top, yet it should appear there. With a frozen order a new card
 is simply prepended, and the next re-sort files it where its score belongs.
+
+## The day planner
+
+Days come from the `trip_day` rows seeded by `schema.sql`, one per trip date. Stops
+and travel legs are both `itinerary_item` rows, held in the same normalized store as
+places and votes, with the same optimistic-write and realtime pattern. Items reference
+places by id and are joined to them client-side; there is no second view.
+
+### Legs belong to the event after them
+
+Stops are items of kind `activity`, `meal` or `logistics`. Legs — how you get from
+one stop to the next — are items of kind `transit`, and every leg is attached to the
+event that follows it. Moving or re-timing an event moves its legs with it, and
+removing an event removes them. That rule is what stops "Metro to Tivoli" from ending
+up between breakfast and lunch after Tivoli has moved to the evening. Legs after the
+last event are the way back to the hotel.
+
+The schema has no columns for travel mode or duration, so both live in the leg's
+title by convention: `Metro · 14 min · M3 from Nørreport`. Every part is optional; a
+title that doesn't follow the convention just shows as plain text. See `src/lib/legs.ts`.
+Two nullable columns would be tidier if the schema is ever opened up.
+
+### Ordering
+
+Order is manual (the ↑/↓ buttons) but time-aware: giving a stop a start time files it
+chronologically among the other *timed* stops, and untimed ones stay where you put
+them. A stop that's already in a sensible place doesn't move. Reordering by hand can
+put times out of sequence; those stops are flagged rather than silently re-sorted.
+
+`sort_order` is a plain integer, so keys are spaced 1024 apart and new ones go at the
+midpoint between neighbours. A day is renumbered only when a gap closes, which takes
+about ten inserts in the same spot. See `src/lib/order.ts`.
+
+### Rearrangements are atomic
+
+Every move, re-time or insert that touches more than one row goes out as a single
+multi-row `upsert`, which PostgREST runs in one transaction. With one request per row,
+a failure partway through could land an event's new position but not its leg's —
+silently re-attaching a route to the wrong stop. On failure the app does a forced
+refetch and shows the server's state. Rows are sent whole because Postgres checks
+`NOT NULL` and `CHECK` constraints on the proposed row even when it becomes an update.
+
+### Things that happen automatically
+
+- **Status.** Scheduling a place marks it `scheduled` on the board, and cards show
+  which days it's on. Removing it from the last day puts it back on the shortlist.
+  `done` and `skipped` are never overridden.
+- **Deleting a scheduled place** keeps the stop, as plain text. Every place-linked
+  item stores a snapshot of the place name in `title`. Without it, `place_id`'s
+  `ON DELETE SET NULL` would leave a row with neither a place nor a title, violate
+  `item_has_subject`, and make the delete fail outright.
+- **Saves only send what changed**, in every sheet. That way an edit can't write
+  stale values over a change made on the other phone while the sheet was open.
+
+### Daylight, bookings, directions
+
+- **Sunrise and sunset** are computed per day for Copenhagen with the standard sunrise
+  equation, in the trip's time zone. It agrees with NOAA's algorithm to within a
+  minute. Places marked "needs daylight" are flagged when timed after dark, before
+  sunrise, running past sunset, or with under an hour of light left.
+- **Reservations**: places that need one but aren't marked booked are flagged on the
+  day. Marking one booked (with an optional confirmation number) clears the red
+  book-by pill on the board.
+- **Directions** hand off to Google Maps with both ends and the leg's mode filled in —
+  real transit routing and times, no API key. The day's first leg starts from the
+  hotel if one is set. Places route by address when they have one, otherwise by
+  name, neighborhood and city.
